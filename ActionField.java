@@ -17,7 +17,8 @@
 
         void runTheGame() throws Exception {
             tank.moveRandomWollFire();
-            //tank.moveRandom();
+//            tank.moveRandomWoll();
+//            tank.moveRandom();
             //tank.moveToQuadrant(2, 7);
 
 //		tank.move();
@@ -50,11 +51,11 @@
 
             int covered = 0;
             while (covered < 64) {
-                if (tank.getDirection() == 1) {
+                if (tank.getDirection() == Direction.TOP) {
                     tank.updateY(-1);
-                } else if (tank.getDirection() == 2) {
+                } else if (tank.getDirection() == Direction.BOTTOM) {
                     tank.updateY(1);
-                } else if (tank.getDirection() == 3) {
+                } else if (tank.getDirection() == Direction.LEFT) {
                     tank.updateX(-1);
                 } else {
                     tank.updateX(1);
@@ -70,11 +71,11 @@
             this.bullet = bullet;
             while (bullet.getX() >= -14 && bullet.getX() <= 590
                     && bullet.getY() >= -14 && bullet.getY() <= 590) {
-                if (bullet.getDirrect() == 1) {
+                if (bullet.getDirrect() == Direction.TOP) {
                     bullet.updateY(-1);
-                } else if (bullet.getDirrect() == 2) {
+                } else if (bullet.getDirrect() == Direction.BOTTOM) {
                     bullet.updateY(1);
-                } else if (bullet.getDirrect() == 3) {
+                } else if (bullet.getDirrect() == Direction.LEFT) {
                     bullet.updateX(-1);
                 } else {
                     bullet.updateX(1);
@@ -117,7 +118,7 @@
         public ActionField() throws Exception {
             battleField = new Field();
             tank = new Tank(this, battleField);
-            bullet = new Bullet(-100, -100, -1);
+            bullet = new Bullet(-100, -100, Direction.EMPTY);
             JFrame frame = new JFrame("BATTLE FIELD, DAY 4 - OLEG - ");
             frame.setLocation(750, 100);
             frame.setMinimumSize(new Dimension(battleField.getBfWidth(),
@@ -170,11 +171,11 @@
             g.fillRect(tank.getX(), tank.getY(), 64, 64);
 
             g.setColor(new Color(0, 255, 0));
-            if (tank.getDirection() == 1) {
+            if (tank.getDirection() == Direction.TOP) {
                 g.fillRect(tank.getX() + 20, tank.getY(), 24, 34);
-            } else if (tank.getDirection() == 2) {
+            } else if (tank.getDirection() == Direction.BOTTOM) {
                 g.fillRect(tank.getX() + 20, tank.getY() + 30, 24, 34);
-            } else if (tank.getDirection() == 3) {
+            } else if (tank.getDirection() == Direction.LEFT) {
                 g.fillRect(tank.getX(), tank.getY() + 20, 34, 24);
             } else {
                 g.fillRect(tank.getX() + 30, tank.getY() + 20, 34, 24);

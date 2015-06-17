@@ -14,11 +14,11 @@ public class ControlField {
         int nextPosition = -100;
 
 
-        if (tank.getDirection() == 1) {
+        if (tank.getDirection() == Direction.TOP) {
             nextPosition = tank.getY() - 1;
-        } else if (tank.getDirection() == 2) {
+        } else if (tank.getDirection() == Direction.BOTTOM) {
             nextPosition = tank.getY() + 1;
-        } else if (tank.getDirection() == 3) {
+        } else if (tank.getDirection() == Direction.LEFT) {
             nextPosition = tank.getX() - 1;
         } else {
             nextPosition = tank.getX() + 1;
@@ -32,13 +32,13 @@ public class ControlField {
     public static boolean controlWoll(Field bf, Tank tank) {
         int y = tank.getY() / 64;
         int x = tank.getX() / 64;
-        if (tank.getDirection() == 1 && y != 0) {
+        if (tank.getDirection() == Direction.TOP && y != 0) {
             y = y - 1;
-        } else if (tank.getDirection() == 2 && y != 8) {
+        } else if (tank.getDirection() == Direction.BOTTOM && y != 8) {
             y = y + 1;
-        } else if (tank.getDirection() == 3 && x != 0) {
+        } else if (tank.getDirection() == Direction.LEFT && x != 0) {
             x = x - 1;
-        } else if (tank.getDirection() == 4 && x != 8) {
+        } else if (tank.getDirection() == Direction.RIGHT && x != 8) {
             x = x + 1;
         }
         System.out.println("x: " + x);

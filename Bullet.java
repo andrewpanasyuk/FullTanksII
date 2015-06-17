@@ -5,25 +5,25 @@ public class Bullet {
     private int x;
     private int y;
     private int speed = 1;
-    private int dirrect;
+    private Direction dirrect;
 
     Bullet() {
         this.x = -100;
         this.y = -100;
         this.speed = 10;
-        this.dirrect = 1;
+        this.dirrect = Direction.TOP;
     }
-    Bullet (int x, int y, int direction) {
+    Bullet (int x, int y, Direction dirrect) {
         this.x = x;
         this.y = y;
-        this.dirrect = direction;
+        this.dirrect = dirrect;
     }
 
     public int getSpeed() {
         return speed;
     }
 
-    public int getDirrect() {
+    public Direction getDirrect() {
         return dirrect;
     }
 
@@ -39,7 +39,7 @@ public class Bullet {
         return y;
     }
 
-    public void setDirrect(int dirrect) {
+    public void setDirrect(Direction dirrect) {
         this.dirrect = dirrect;
     }
     public void destroyBullet(){

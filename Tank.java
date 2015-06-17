@@ -4,17 +4,17 @@
 public class Tank {
     private int x;
     private int y;
-    private int direction;
+    private Direction direction;
     private int speed = 10;
     private ActionField af;
     private Field bf;
     private ControlField cf;
 
     public Tank(ActionField af, Field bf) {
-        this(bf, af, 128, 512, 1);
+        this(bf, af, 128, 512, Direction.TOP);
     }
 
-    public Tank(Field bf, ActionField af, int x, int y, int direction) {
+    public Tank(Field bf, ActionField af, int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
@@ -22,7 +22,7 @@ public class Tank {
         this.bf = bf;
     }
 
-    public void turn(int direction) throws Exception {
+    public void turn(Direction direction) throws Exception {
         this.direction = direction;
         af.processTurn(this);
     }
@@ -40,7 +40,15 @@ public class Tank {
     public void moveRandom() throws Exception { // ---------------------------------
         while (true) {
             int random = Generation.gen(1, 4);
-            this.direction = random;
+            if (random == 1) {
+                this.direction = Direction.TOP;
+            } else if (random == 2) {
+                this.direction = Direction.BOTTOM;
+            } else if (random == 3) {
+                this.direction = Direction.LEFT;
+            } else {
+                this.direction = Direction.RIGHT;
+            }
             if (cf.controlTank(bf, this)) {
                 move();
             }
@@ -50,7 +58,15 @@ public class Tank {
     public void moveRandomWoll() throws Exception { // ---------------------------------
         while (true) {
             int random = Generation.gen(1, 4);
-            this.direction = random;
+            if (random == 1) {
+                this.direction = Direction.TOP;
+            } else if (random == 2) {
+                this.direction = Direction.BOTTOM;
+            } else if (random == 3) {
+                this.direction = Direction.LEFT;
+            } else {
+                this.direction = Direction.RIGHT;
+            }
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this)) {
                     move();
@@ -62,7 +78,15 @@ public class Tank {
     public void moveRandomWollFire() throws Exception { // ---------------------------------
         while (true) {
             int random = Generation.gen(1, 4);
-            this.direction = random;
+            if (random == 1) {
+                this.direction = Direction.TOP;
+            } else if (random == 2) {
+                this.direction = Direction.BOTTOM;
+            } else if (random == 3) {
+                this.direction = Direction.LEFT;
+            } else {
+                this.direction = Direction.RIGHT;
+            }
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this) == false) {
                     fire();
@@ -80,24 +104,25 @@ public class Tank {
         int goalX = Integer.parseInt(newQadrant.substring(separator + 1));
         if (x < goalX) {
             while (x < goalX) {
-                this.direction = 4;
+                this.direction = Direction.RIGHT;
+                //this.direction.setId(4);
                 move();
             }
         } else {
             while (x > goalX) {
-                this.direction = 3;
+                this.direction = Direction.LEFT;
                 move();
             }
         }
 
         if (y < goalY) {
             while (y < goalY) {
-                this.direction = 2;
+                this.direction = Direction.BOTTOM;
                 move();
             }
         } else {
             while (y > goalY) {
-                this.direction = 1;
+                this.direction = Direction.TOP;
                 move();
             }
         }
@@ -120,7 +145,7 @@ public class Tank {
         return y;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
