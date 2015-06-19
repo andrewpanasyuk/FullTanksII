@@ -14,9 +14,9 @@ public class ControlField {
         int nextPosition = -100;
 
 
-        if (tank.getDirection() == Direction.TOP) {
+        if (tank.getDirection() == Direction.UP) {
             nextPosition = tank.getY() - 1;
-        } else if (tank.getDirection() == Direction.BOTTOM) {
+        } else if (tank.getDirection() == Direction.DOWN) {
             nextPosition = tank.getY() + 1;
         } else if (tank.getDirection() == Direction.LEFT) {
             nextPosition = tank.getX() - 1;
@@ -32,9 +32,9 @@ public class ControlField {
     public static boolean controlWoll(Field bf, Tank tank) {
         int y = tank.getY() / 64;
         int x = tank.getX() / 64;
-        if (tank.getDirection() == Direction.TOP && y != 0) {
+        if (tank.getDirection() == Direction.UP && y != 0) {
             y = y - 1;
-        } else if (tank.getDirection() == Direction.BOTTOM && y != 8) {
+        } else if (tank.getDirection() == Direction.DOWN && y != 8) {
             y = y + 1;
         } else if (tank.getDirection() == Direction.LEFT && x != 0) {
             x = x - 1;

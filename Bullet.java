@@ -11,7 +11,7 @@ public class Bullet {
         this.x = -100;
         this.y = -100;
         this.speed = 10;
-        this.dirrect = Direction.TOP;
+        this.dirrect = Direction.UP;
     }
     Bullet (int x, int y, Direction dirrect) {
         this.x = x;

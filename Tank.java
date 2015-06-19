@@ -5,13 +5,17 @@ public class Tank {
     private int x;
     private int y;
     private Direction direction;
-    private int speed = 10;
+    protected int speed = 10;
     private ActionField af;
-    private Field bf;
+    protected Field bf;
     private ControlField cf;
 
+    public Tank() {
+
+    }
+
     public Tank(ActionField af, Field bf) {
-        this(bf, af, 128, 512, Direction.TOP);
+        this(bf, af, 128, 512, Direction.UP);
     }
 
     public Tank(Field bf, ActionField af, int x, int y, Direction direction) {
@@ -41,9 +45,9 @@ public class Tank {
         while (true) {
             int random = Generation.gen(1, 4);
             if (random == 1) {
-                this.direction = Direction.TOP;
+                this.direction = Direction.UP;
             } else if (random == 2) {
-                this.direction = Direction.BOTTOM;
+                this.direction = Direction.DOWN;
             } else if (random == 3) {
                 this.direction = Direction.LEFT;
             } else {
@@ -59,9 +63,9 @@ public class Tank {
         while (true) {
             int random = Generation.gen(1, 4);
             if (random == 1) {
-                this.direction = Direction.TOP;
+                this.direction = Direction.UP;
             } else if (random == 2) {
-                this.direction = Direction.BOTTOM;
+                this.direction = Direction.DOWN;
             } else if (random == 3) {
                 this.direction = Direction.LEFT;
             } else {
@@ -79,9 +83,9 @@ public class Tank {
         while (true) {
             int random = Generation.gen(1, 4);
             if (random == 1) {
-                this.direction = Direction.TOP;
+                this.direction = Direction.UP;
             } else if (random == 2) {
-                this.direction = Direction.BOTTOM;
+                this.direction = Direction.DOWN;
             } else if (random == 3) {
                 this.direction = Direction.LEFT;
             } else {
@@ -117,12 +121,12 @@ public class Tank {
 
         if (y < goalY) {
             while (y < goalY) {
-                this.direction = Direction.BOTTOM;
+                this.direction = Direction.DOWN;
                 move();
             }
         } else {
             while (y > goalY) {
-                this.direction = Direction.TOP;
+                this.direction = Direction.UP;
                 move();
             }
         }
@@ -153,4 +157,11 @@ public class Tank {
         return speed;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

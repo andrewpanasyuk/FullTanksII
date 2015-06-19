@@ -12,10 +12,15 @@
         private boolean COLORDED_MODE = false;
         private Field battleField;
         private Tank tank;
+        private Tiger agressor;
+        private BT7 bt7;
         private Bullet bullet;
         public ActionField actionField;
 
         void runTheGame() throws Exception {
+//bt7 = new BT7(actionField, battleField);
+//            System.out.println(bt7.getSpeed());
+            //agressor.moveRandomWollFire();
             tank.moveRandomWollFire();
 //            tank.moveRandomWoll();
 //            tank.moveRandom();
@@ -51,9 +56,9 @@
 
             int covered = 0;
             while (covered < 64) {
-                if (tank.getDirection() == Direction.TOP) {
+                if (tank.getDirection() == Direction.UP) {
                     tank.updateY(-1);
-                } else if (tank.getDirection() == Direction.BOTTOM) {
+                } else if (tank.getDirection() == Direction.DOWN) {
                     tank.updateY(1);
                 } else if (tank.getDirection() == Direction.LEFT) {
                     tank.updateX(-1);
@@ -71,9 +76,9 @@
             this.bullet = bullet;
             while (bullet.getX() >= -14 && bullet.getX() <= 590
                     && bullet.getY() >= -14 && bullet.getY() <= 590) {
-                if (bullet.getDirrect() == Direction.TOP) {
+                if (bullet.getDirrect() == Direction.UP) {
                     bullet.updateY(-1);
-                } else if (bullet.getDirrect() == Direction.BOTTOM) {
+                } else if (bullet.getDirrect() == Direction.DOWN) {
                     bullet.updateY(1);
                 } else if (bullet.getDirrect() == Direction.LEFT) {
                     bullet.updateX(-1);
@@ -118,6 +123,8 @@
         public ActionField() throws Exception {
             battleField = new Field();
             tank = new Tank(this, battleField);
+            //agressor = new Tiger(actionField, battleField, 0, 0, Direction.LEFT);
+            agressor = new Tiger(actionField, battleField);
             bullet = new Bullet(-100, -100, Direction.EMPTY);
             JFrame frame = new JFrame("BATTLE FIELD, DAY 4 - OLEG - ");
             frame.setLocation(750, 100);
@@ -169,11 +176,14 @@
 
             g.setColor(new Color(255, 0, 0));
             g.fillRect(tank.getX(), tank.getY(), 64, 64);
+            g.setColor(new Color(155, 0, 0));
+            g.fillRect(agressor.getX(), agressor.getY(), 64, 64);
+
 
             g.setColor(new Color(0, 255, 0));
-            if (tank.getDirection() == Direction.TOP) {
+            if (tank.getDirection() == Direction.UP) {
                 g.fillRect(tank.getX() + 20, tank.getY(), 24, 34);
-            } else if (tank.getDirection() == Direction.BOTTOM) {
+            } else if (tank.getDirection() == Direction.DOWN) {
                 g.fillRect(tank.getX() + 20, tank.getY() + 30, 24, 34);
             } else if (tank.getDirection() == Direction.LEFT) {
                 g.fillRect(tank.getX(), tank.getY() + 20, 34, 24);
@@ -183,5 +193,16 @@
 
             g.setColor(new Color(255, 255, 0));
             g.fillRect(bullet.getX(), bullet.getY(), 14, 14);
+
+            g.setColor(new Color(0, 55, 0));
+            if (agressor.getDirection() == Direction.UP) {
+                g.fillRect(agressor.getX() + 20, agressor.getY(), 24, 34);
+            } else if (agressor.getDirection() == Direction.DOWN) {
+                g.fillRect(agressor.getX() + 20, agressor.getY() + 30, 24, 34);
+            } else if (agressor.getDirection() == Direction.LEFT) {
+                g.fillRect(agressor.getX(), agressor.getY() + 20, 34, 24);
+            } else {
+                g.fillRect(agressor.getX() + 30, agressor.getY() + 20, 34, 24);
+            }
         }
 }
