@@ -36,7 +36,7 @@ public class Field {
         return batlefield[x][y];
     }
     public void updateQuadrant(int x, int y, String newParametr) {
-        batlefield[x][y] = newParametr;
+        this.batlefield[x][y] = newParametr;
     }
     public int getDimentionY(){
         int dimentionY = bfHeight/64;

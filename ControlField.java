@@ -41,9 +41,9 @@ public class ControlField {
         } else if (tank.getDirection() == Direction.RIGHT && x != 8) {
             x = x + 1;
         }
-        System.out.println("x: " + x);
-        System.out.println("y: " + y);
-        if (bf.getBatlefield()[y][x]!="B") {
+//        System.out.println("x: " + x);
+//        System.out.println("y: " + y);
+        if (bf.getBatlefield()[y][x]==" ") {
             return true;
         } else {
             return false;

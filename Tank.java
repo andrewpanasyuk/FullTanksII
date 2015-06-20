@@ -5,7 +5,7 @@ public class Tank {
     private int x;
     private int y;
     private Direction direction;
-    protected int speed = 10;
+    protected int speed = 2;
     private ActionField af;
     protected Field bf;
     private ControlField cf;
@@ -130,7 +130,7 @@ public class Tank {
                 move();
             }
         }
-        System.out.println(newQadrant);
+        //System.out.println(newQadrant);
     }
 
     public int getX() {
@@ -163,5 +163,9 @@ public class Tank {
 
     public void setY(int y) {
         this.y = y;
+    }
+    public void tankDestroy(){
+        setY(-100);
+        setX(-100);
     }
 }
