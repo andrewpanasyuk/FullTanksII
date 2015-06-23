@@ -1,7 +1,7 @@
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public class Tank {
+public abstract class AbstractTank {
     private int x;
     private int y;
     private Direction direction;
@@ -10,15 +10,15 @@ public class Tank {
     protected Field bf;
     private ControlField cf;
 
-    public Tank() {
+    public AbstractTank() {
 
     }
 
-    public Tank(ActionField af, Field bf) {
+    public AbstractTank(ActionField af, Field bf) {
         this(bf, af, 128, 512, Direction.UP);
     }
 
-    public Tank(Field bf, ActionField af, int x, int y, Direction direction) {
+    public AbstractTank(Field bf, ActionField af, int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;

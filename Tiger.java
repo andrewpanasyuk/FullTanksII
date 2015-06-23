@@ -1,7 +1,7 @@
 /**
  * Created by panasyuk on 17.06.2015.
  */
-public class Tiger extends Tank {
+public class Tiger extends AbstractTank {
 private int armor;
 
 public Tiger(ActionField af, Field bf) throws  Exception{

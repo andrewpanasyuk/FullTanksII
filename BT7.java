@@ -1,7 +1,7 @@
 /**
  * Created by panasyuk on 17.06.2015.
  */
-public class BT7 extends Tank {
+public class BT7 extends AbstractTank {
     public BT7(ActionField af, Field bf){
         super(af, bf);
         speed = 5;
