@@ -6,6 +6,7 @@ public class Bullet {
     private int y;
     private int speed = 1;
     private Direction dirrect;
+    private int armorPiercing;
 
     Bullet() {
         this.x = -100;
@@ -13,10 +14,20 @@ public class Bullet {
         this.speed = 10;
         this.dirrect = Direction.UP;
     }
-    Bullet (int x, int y, Direction dirrect) {
+    Bullet (int x, int y, Direction dirrect, int armorPiercing) {
         this.x = x;
         this.y = y;
         this.dirrect = dirrect;
+        this.armorPiercing = armorPiercing;
+
+    }
+
+    public int getArmorPiercing() {
+        return armorPiercing;
+    }
+
+    public void setArmorPiercing(int armorPiercing) {
+        this.armorPiercing = armorPiercing;
     }
 
     public int getSpeed() {

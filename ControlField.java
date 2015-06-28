@@ -1,3 +1,5 @@
+import ObjectBF.Ampty;
+
 /**
  * Created by panasyuk on 16.06.2015.
  */
@@ -43,7 +45,7 @@ public class ControlField {
         }
 //        System.out.println("x: " + x);
 //        System.out.println("y: " + y);
-        if (bf.getBatlefield()[y][x]==" ") {
+        if (bf.getBatlefield()[y][x] instanceof Ampty) {
             return true;
         } else {
             return false;
