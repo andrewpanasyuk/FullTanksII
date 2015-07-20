@@ -28,13 +28,13 @@ public class Field {
             for (int n = 0; n < 9; n++) {
                 int s = Generation.gen(0, 9);
                 if (s == 0 || s == 1) {
-                    bf[i][n] = new Water(i, n);
+                    bf[i][n] = new Water(n, i);
                 } else if (s == 2) {
-                    bf[i][n] = new Brick(i, n);
+                    bf[i][n] = new Brick(n, i);
                 } else if (s == 3) {
-                    bf[i][n] = new Rock(i, n);
+                    bf[i][n] = new Rock(n, i);
                 } else {
-                    bf[i][n] = new Ampty(i, n);
+                    bf[i][n] = new Ampty(n, i);
                 }
             }
         }
@@ -43,31 +43,42 @@ public class Field {
 
     public Construct[][] cff() {
         String[][] bf = new String[][]{
-                {" ", " ", "B", " ", " ", " ", " ", " ", " "},
-                {" ", " ", "B", "W", "W", "W", " ", " ", " "},
-                {"B", "B", "B", " ", " ", " ", " ", " ", " "},
+                {"E", " ", "W", " ", "B", " ", " ", " ", " "},
+                {" ", " ", "W", " ", "B", " ", " ", " ", " "},
+                {"W", "W", "W", " ", "B", "B", "B", "B", "R"},
+                {"R", " ", " ", " ", " ", " ", " ", " ", "R"},
+                {"R", " ", " ", " ", " ", " ", " ", " ", "R"},
+                {"R", "R", "R", " ", " ", " ", " ", " ", "R"},
+                {" ", " ", " ", " ", " ", " ", " ", " ", "R"},
                 {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-                {" ", " ", "R", "R", " ", " ", " ", " ", " "},
-                {"W", " ", "B", "R", "R", " ", " ", " ", " "},
-                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-                {" ", " ", " ", " ", " ", " ", " ", "E", " "}
+                {" ", " ", " ", "R", "R", "R", "R", " ", " "}
         };
+        System.out.println(bf[1][7]);
+//        {" ", " ", "B", " ", " ", " ", " ", " ", " "},
+//                {" ", " ", "B", "W", "W", "W", " ", " ", " "},
+//                {"B", "B", "B", " ", " ", " ", " ", " ", " "},
+//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+//                {" ", " ", " ", "R", " ", " ", " ", " ", " "},
+//                {"W", " ", " ", "R", "R", " ", " ", " ", " "},
+//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
+//                {" ", "E", " ", " ", " ", " ", " ", " ", " "}
+//        };
 
 
         Construct[][] constractField = new Construct[9][9];
-        for (int i = 0; i < 9; i++) {
-            for (int n = 0; n < 9; n++) {
+        for (int n = 0; n < 9; n++) {
+            for (int i = 0; i < 9; i++) {
                 if (bf[i][n] == "B") {
-                    constractField[i][n] = new Brick(i, n);
+                    constractField[i][n] = new Brick(n, i);
                 } else if (bf[i][n] == "R") {
-                    constractField[i][n] = new Rock(i, n);
+                    constractField[i][n] = new Rock(n, i);
                 } else if (bf[i][n] == "W") {
-                    constractField[i][n] = new Water(i, n);
+                    constractField[i][n] = new Water(n, i);
                 } else if (bf[i][n] == "E") {
-                    constractField[i][n] = new Eagle(i, n);
+                    constractField[i][n] = new Eagle(n, i);
                 } else {
-                    constractField[i][n] = new Ampty(i, n);
+                    constractField[i][n] = new Ampty(n, i);
                 }
             }
         }
@@ -84,7 +95,7 @@ public class Field {
     }
 
     public Construct scanQuadrant(int x, int y) {
-        return batlefield[x][y];
+        return batlefield[y][x];
     }
 
     public void updateQuadrant(int x, int y, Construct newParametr) {

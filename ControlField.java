@@ -10,8 +10,8 @@ public class ControlField {
     private AbstractTank abstractTank;
 
     public static boolean controlTank(Field bf, AbstractTank abstractTank) {
-//		this.bf=bf;
-//		this.abstractTank=abstractTank;
+//        System.out.println("x = " + abstractTank.getX());
+//        System.out.println("y = " + abstractTank.getY());
         int finish = 512;
         int nextPosition = -100;
 
@@ -43,8 +43,6 @@ public class ControlField {
         } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
             x = x + 1;
         }
-//        System.out.println("x: " + x);
-//        System.out.println("y: " + y);
         if (bf.getBatlefield()[y][x] instanceof Ampty) {
             return true;
         } else {

@@ -58,6 +58,7 @@ public class Bullet {
         this.y = -100;
     }
 
+
     public void setX(int x) {
         this.x = x;
     }

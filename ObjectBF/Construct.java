@@ -10,6 +10,26 @@ public class Construct implements Destroy {
     private int qandrantY;
     private Color color;
     private int armor;
+    private String nameImage;
+    private Image img;
+
+
+    public Image getImg() {
+        return img;
+    }
+
+
+    public void setImg(Image img) {
+        this.img = img;
+    }
+
+    public String getNameImage() {
+        return nameImage;
+    }
+
+    public void setNameImage(String nameImage) {
+        this.nameImage = nameImage;
+    }
 
     public int getArmor() {
         return armor;
