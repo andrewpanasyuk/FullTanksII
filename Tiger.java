@@ -15,7 +15,12 @@ public class Tiger extends AbstractTank {
         newBaseAgressor();
         setArmor(2);
         setPower(2);
+
+
+
+
         setNameImageUP("Tank_UP.png");
+        //setImg(getNameImage());
         setNameImageD("Tank_D.png");
         setNameImageL("Tank_L.png");
         setNameImageR("Tank_R.png");
@@ -44,21 +49,21 @@ public class Tiger extends AbstractTank {
         }
     }
 
-    public Tiger(ActionField af, Field bf, int x, int y, Direction direction) throws Exception {
-        super(bf, af, x, y, direction);
-        setName("agressor");
-        setArmor(5);
-        newBaseAgressor();
-        bullet.setArmorPiercing(2);
-        setNameImageUP("Tank_UP.png");
-        try {
-            setImgUP(ImageIO.read(new File(getNameImageUP())));
-        } catch (IOException e) {
-            System.out.println("cannot found image: " + getNameImageUP());
-        }
-
-
-    }
+//    public Tiger(ActionField af, Field bf, int x, int y, Direction direction) throws Exception {
+//        super(bf, af, x, y, direction);
+//        setName("agressor");
+//        setArmor(5);
+//        newBaseAgressor();
+//        bullet.setArmorPiercing(2);
+//        setNameImage("Tank_UP.png");
+//        try {
+//            setImg(ImageIO.read(new File(getNameImage())));
+//        } catch (IOException e) {
+//            System.out.println("cannot found image: " + getNameImage());
+//        }
+//
+//
+//    }
 
     public void newBaseAgressor() throws Exception {
         setX(2 * 64);

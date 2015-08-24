@@ -14,14 +14,31 @@ public class Water extends Construct{
         setQandrantX(x);
         setQandrantY(y);
 //        setColor(Color.blue);
-        setNameImage("water.png");
+        setNameImage("water_pr.png");
         try {
             setImg(ImageIO.read(new File(getNameImage())));
         } catch (IOException e) {
             System.out.println("cannot found image: " + getNameImage());
         }
+        setArmor(-1);
 
-
+    }
+    public Water(int x, int y, int i){
+        setQandrantX(x);
+        setQandrantY(y);
+//        setColor(Color.blue);
+        setNameImage("water_pr.png");
+        try {
+            setImg(ImageIO.read(new File(getNameImage())));
+        } catch (IOException e) {
+            System.out.println("cannot found image: " + getNameImage());
+        }
         setArmor(-1);
     }
+
+    public Water(){
+
+    }
+
+
 }

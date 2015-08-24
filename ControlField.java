@@ -1,4 +1,7 @@
 import ObjectBF.Ampty;
+import ObjectBF.Water;
+
+import java.awt.*;
 
 /**
  * Created by panasyuk on 16.06.2015.
@@ -8,6 +11,7 @@ public class ControlField {
     private boolean woll;
     private Field bf;
     private AbstractTank abstractTank;
+    private ActionField af;
 
     public static boolean controlTank(Field bf, AbstractTank abstractTank) {
 //        System.out.println("x = " + abstractTank.getX());
@@ -31,7 +35,7 @@ public class ControlField {
             return false;
         }
     }
-    public static boolean controlWoll(Field bf, AbstractTank abstractTank) {
+    public static boolean controlWoll(Field bf, AbstractTank abstractTank, ActionField af) {
         int y = abstractTank.getY() / 64;
         int x = abstractTank.getX() / 64;
         if (abstractTank.getDirection() == Direction.UP && y != 0) {
@@ -43,7 +47,22 @@ public class ControlField {
         } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
             x = x + 1;
         }
-        if (bf.getBatlefield()[y][x] instanceof Ampty) {
+        if (bf.getBatlefield()[y][x] instanceof Ampty || bf.getBatlefield()[y][x] instanceof Water) {
+            if (bf.getBatlefield()[y][x] instanceof Water) {
+//                af.paintComponent(Graphics g){
+//
+//                };
+               // bf.getBatlefield()[y][x] = new Water(x, y, 1);
+
+
+
+
+//                af.paintComponent();
+
+//                af.getBatlefield()[y][x] =  new Ampty(x, y);
+//                abstractTank.
+
+            }
             return true;
         } else {
             return false;

@@ -7,14 +7,14 @@ import java.io.IOException;
  */
 public class T34 extends AbstractTank {
     public T34 (ActionField af, Field bf, Bullet bullet) {
-        super(bf, af, 128, 512,Direction.UP);
+        super(bf, af, 128, 512, Direction.UP);
         setName("defender");
         setArmor(1);
         setNameImageUP("T34_UP.png");
         setNameImageD("T34_D.png");
         setNameImageL("T34_L.png");
         setNameImageR("T34_R.png");
-
+//
         try {
             setImgUP(ImageIO.read(new File(getNameImageUP())));
         } catch (IOException e) {
@@ -38,9 +38,14 @@ public class T34 extends AbstractTank {
 
     }
 
-    public T34(Field bf, ActionField af, int x, int y, Direction direction) {
-        super(bf, af, x, y, Direction.UP);
-        setName("defender");
-        setArmor(1);
-    }
+//    public T34(Field bf, ActionField af, int x, int y, Direction direction) {
+//        super(bf, af, x, y, Direction.UP);
+//        setName("defender");
+//        setArmor(1);
+//        try {
+//            setImg(ImageIO.read(new File(getNameImage())));
+//        } catch (IOException e) {
+//            System.out.println("cannot found image: " + getNameImage());
+//        }
+//    }
 }

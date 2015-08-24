@@ -1,6 +1,9 @@
 import ObjectBF.Destroy;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by panasyuk on 16.06.2015.
@@ -16,6 +19,7 @@ public abstract class AbstractTank implements Destroy {
     private int armor;
     protected Bullet bullet;
     protected int power;
+//    private String nameImage;
     private String nameImageUP;
     private String nameImageD;
     private String nameImageL;
@@ -24,8 +28,27 @@ public abstract class AbstractTank implements Destroy {
     private Image imgD;
     private Image imgL;
     private Image imgR;
+//    private Image img;
 
-    public String getNameImageD() {
+//    public Image getImg() {
+//        return img;
+//    }
+//
+//    public void setImg(Image img) {
+//        this.img = img;
+//    }
+//
+    public String getNameImageUP() {
+        return nameImageUP;
+    }
+
+    public void setNameImageUP(String nameImageUP) {
+        this.nameImageUP = nameImageUP;
+    }
+
+
+
+        public String getNameImageD() {
         return nameImageD;
     }
 
@@ -80,14 +103,14 @@ public abstract class AbstractTank implements Destroy {
     public void setImgUP(Image imgUP) {
         this.imgUP = imgUP;
     }
-
-    public String getNameImageUP() {
-        return nameImageUP;
-    }
-
-    public void setNameImageUP(String nameImageUP) {
-        this.nameImageUP = nameImageUP;
-    }
+//
+//    public String getNameImageUP() {
+//        return nameImageUP;
+//    }
+//
+//    public void setNameImageUP(String nameImageUP) {
+//        this.nameImageUP = nameImageUP;
+//    }
 
     public AbstractTank() {
 
@@ -111,6 +134,11 @@ public abstract class AbstractTank implements Destroy {
 
     public AbstractTank(ActionField af, Field bf) {
         this(bf, af, 128, 512, Direction.UP);
+//        try {
+//            setImg(ImageIO.read(new File(getNameImage())));
+//        } catch (IOException e) {
+//            System.out.println("cannot found image: " + getNameImage());
+//        }
     }
 
     public AbstractTank(Field bf, ActionField af, int x, int y, Direction direction) {
@@ -119,6 +147,12 @@ public abstract class AbstractTank implements Destroy {
         this.direction = direction;
         this.af = af;
         this.bf = bf;
+
+//        try {
+//            setImg(ImageIO.read(new File(getNameImage())));
+//        } catch (IOException e) {
+//            System.out.println("cannot found image: " + getNameImage());
+//        }
     }
 
     public void turn(Direction direction) throws Exception {
@@ -185,7 +219,7 @@ public abstract class AbstractTank implements Destroy {
                 this.direction = Direction.RIGHT;
             }
             if (ControlField.controlTank(bf, this)) {
-                if (ControlField.controlWoll(bf, this)) {
+                if (ControlField.controlWoll(bf, this, af)) {
                     move();
                 }
             }
@@ -235,7 +269,7 @@ public abstract class AbstractTank implements Destroy {
                 this.direction = Direction.RIGHT;
             }
             if (ControlField.controlTank(bf, this)) {
-                if (ControlField.controlWoll(bf, this) == false) {
+                if (ControlField.controlWoll(bf, this, af) == false) {
                     fire();
                     //System.out.println("bumc");
                 }

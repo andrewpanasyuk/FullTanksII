@@ -14,6 +14,8 @@ public class Construct implements Destroy {
     private Image img;
 
 
+
+
     public Image getImg() {
         return img;
     }
