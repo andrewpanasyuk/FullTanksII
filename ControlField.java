@@ -1,19 +1,17 @@
 import ObjectBF.Ampty;
 import ObjectBF.Water;
 
-import java.awt.*;
-
 /**
  * Created by panasyuk on 16.06.2015.
  */
 public class ControlField {
     private boolean field;
     private boolean woll;
-    private Field bf;
+    private BField bf;
     private AbstractTank abstractTank;
     private ActionField af;
 
-    public static boolean controlTank(Field bf, AbstractTank abstractTank) {
+    public static boolean controlTank(BField bf, AbstractTank abstractTank) {
 //        System.out.println("x = " + abstractTank.getX());
 //        System.out.println("y = " + abstractTank.getY());
         int finish = 512;
@@ -35,7 +33,7 @@ public class ControlField {
             return false;
         }
     }
-    public static boolean controlWoll(Field bf, AbstractTank abstractTank, ActionField af) {
+    public static boolean controlWoll(BField bf, AbstractTank abstractTank, ActionField af) {
         int y = abstractTank.getY() / 64;
         int x = abstractTank.getX() / 64;
         if (abstractTank.getDirection() == Direction.UP && y != 0) {

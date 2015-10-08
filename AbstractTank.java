@@ -1,21 +1,22 @@
 import ObjectBF.Destroy;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public abstract class AbstractTank implements Destroy {
+public abstract class AbstractTank implements Destroy{
     private String name;
     private int x;
     private int y;
     private Direction direction;
     protected int speed = 10;
     private ActionField af;
-    protected Field bf;
+    protected BField bf;
     private int armor;
     protected Bullet bullet;
     protected int power;
@@ -114,6 +115,11 @@ public abstract class AbstractTank implements Destroy {
 
     public AbstractTank() {
 
+
+
+    }
+    public AbstractTank(ActionField af){
+        this.af = af;
     }
 
     public String getName() {
@@ -132,7 +138,7 @@ public abstract class AbstractTank implements Destroy {
         this.armor = armor;
     }
 
-    public AbstractTank(ActionField af, Field bf) {
+    public AbstractTank(ActionField af, BField bf) {
         this(bf, af, 128, 512, Direction.UP);
 //        try {
 //            setImg(ImageIO.read(new File(getNameImage())));
@@ -141,7 +147,7 @@ public abstract class AbstractTank implements Destroy {
 //        }
     }
 
-    public AbstractTank(Field bf, ActionField af, int x, int y, Direction direction) {
+    public AbstractTank(BField bf, ActionField af, int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
@@ -161,13 +167,25 @@ public abstract class AbstractTank implements Destroy {
     }
 
     public void move() throws Exception {
+
+
+
         af.processMove(this);
+
         fire();
     }
 
     public void fire() throws Exception {
-        Bullet bullet = new Bullet((x + 25), (y + 25), direction, power);
-        af.processFire(bullet);
+        ActionListener fire = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //
+            }
+        };
+//        Bullet bullet = new Bullet((x + 25), (y + 25), direction, power);
+        this.setBullet(new Bullet((x + 25), (y + 25), direction, power));
+
+       af.processFire(bullet);
 
     }
 
@@ -221,8 +239,10 @@ public abstract class AbstractTank implements Destroy {
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this, af)) {
                     move();
+                    //System.out.println(getName() + " bullet: x =  " + getBullet().getX() + " y =  " + getBullet().getY());
                 }
             }
+
         }
     }
 
@@ -248,6 +268,7 @@ public abstract class AbstractTank implements Destroy {
                     y = a;
                     x = b;
                 }
+
             }
         }
         moveToQuadrantFire(x+1, y+1);
@@ -273,6 +294,7 @@ public abstract class AbstractTank implements Destroy {
                     fire();
                     //System.out.println("bumc");
                 }
+                System.out.println("r = " + random + "; x = " + getX() + "; y = " + getY() + "; f - " + "fff");
                 move();
 
             }
@@ -309,6 +331,10 @@ public abstract class AbstractTank implements Destroy {
         }
     }
 
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     public void moveToQuadrantFire(int v, int h) throws Exception {
         String newQadrant = af.getQuadrantXY(v, h);
         int separator = newQadrant.indexOf("_");
@@ -328,6 +354,7 @@ public abstract class AbstractTank implements Destroy {
             }
         }
 
+
         if (y < goalY) {
             while (y < goalY) {
                 this.direction = Direction.DOWN;
@@ -342,6 +369,7 @@ public abstract class AbstractTank implements Destroy {
             }
 
         }
+
     }
 
     public int getX() {
@@ -355,6 +383,25 @@ public abstract class AbstractTank implements Destroy {
     public void updateY(int y) {
         this.y += y;
     }
+
+    public void moves(AbstractTank abstractTank) throws Exception{
+//        int covered = 0;
+//        while (covered < 64) {
+            if (abstractTank.getDirection() == Direction.UP) {
+                abstractTank.updateY(-1);
+            } else if (abstractTank.getDirection() == Direction.DOWN) {
+                abstractTank.updateY(1);
+            } else if (abstractTank.getDirection() == Direction.LEFT) {
+                abstractTank.updateX(-1);
+            } else {
+                abstractTank.updateX(1);
+            }
+//            covered += 1;
+            //repaint();
+//            Thread.sleep(abstractTank.getSpeed());
+        }
+
+
 
     public int getY() {
         return y;
@@ -393,4 +440,6 @@ public abstract class AbstractTank implements Destroy {
     public boolean destroy() {
         return false;
     }
+
+
 }

@@ -2,7 +2,7 @@
  * Created by panasyuk on 17.06.2015.
  */
 public class BT7 extends AbstractTank {
-    public BT7(ActionField af, Field bf, Bullet bullet)throws Exception{
+    public BT7(ActionField af, BField bf, Bullet bullet)throws Exception{
 
         super(af, bf);
 
@@ -10,7 +10,7 @@ public class BT7 extends AbstractTank {
         newBaseBT7();
         speed = 5;
     }
-    public BT7(ActionField af, Field bf, int x, int y, Direction direction) throws Exception{
+    public BT7(ActionField af, BField bf, int x, int y, Direction direction) throws Exception{
 
         super(bf, af, x, y, Direction.UP);
         speed = 5;

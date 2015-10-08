@@ -8,9 +8,10 @@ public class Launcher {
 //        SplashScreen splashScreen = SplashScreen.getSplashScreen();
 //        Thread.sleep(5000);
 //        splashScreen.close();
+        //ControlPanel cp = new ControlPanel();
 
         ActionField actionField = new ActionField();
-        actionField.runTheGame();
+//        actionField.runTheGame();
 
     }
 }

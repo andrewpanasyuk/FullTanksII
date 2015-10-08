@@ -1,6 +1,6 @@
-import ObjectBF.Destroy;
-
 import javax.imageio.ImageIO;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -8,8 +8,11 @@ import java.io.IOException;
  * Created by panasyuk on 17.06.2015.
  */
 public class Tiger extends AbstractTank {
+    public Tiger(){
 
-    public Tiger(ActionField af, Field bf, Bullet bullet) throws Exception {
+    }
+
+    public Tiger(ActionField af, BField bf, Bullet bullet) throws Exception {
         super(af, bf);
         setName("agressor");
         newBaseAgressor();
@@ -49,7 +52,7 @@ public class Tiger extends AbstractTank {
         }
     }
 
-//    public Tiger(ActionField af, Field bf, int x, int y, Direction direction) throws Exception {
+//    public Tiger(ActionField af, BField bf, int x, int y, Direction direction) throws Exception {
 //        super(bf, af, x, y, direction);
 //        setName("agressor");
 //        setArmor(5);
@@ -115,5 +118,32 @@ public class Tiger extends AbstractTank {
 
         }
     }
+//    @Override
+//    public void keyPressed(KeyEvent e) {
+//        if(e.getKeyCode()==e.VK_W){
+//            System.out.println("++++++++++");
+//        }
+////        if(e.getKeyCode()==e.VK_S){
+////            moveDOWN();
+////        }
+////        if(e.getKeyCode()==e.VK_A){
+////            moveLEFT();
+////        }
+////        if(e.getKeyCode()==e.VK_D){
+////            moveRIGHT();
+////        }
+//    }
+//
+//    @Override
+//    public void keyTyped(KeyEvent e) {
+//        System.out.println(e.getKeyCode());
+//
+//    }
+//
+//    @Override
+//    public void keyReleased(KeyEvent e) {
+//        System.out.println(e.getKeyCode());
+//
+//    }
 }
 

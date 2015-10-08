@@ -3,17 +3,17 @@ import ObjectBF.*;
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public class Field {
+public class BField {
     private Construct[][] batlefield;
     public int bfWidth = 576;
     public int bfHeight = 576;
 
-    public Field() {
+    public BField() {
         //String [][]start = makeField();
         this.batlefield = makeField();
     }
 
-    public Field(int i) {
+    public BField(int i) {
         if (i == 1) {
             //String [][]start = makeField();
             this.batlefield = cff();
