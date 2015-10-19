@@ -6,7 +6,7 @@ import java.io.IOException;
  * Created by panasyuk on 23.06.2015.
  */
 public class T34 extends AbstractTank {
-    public T34 (ActionField af, BField bf, Bullet bullet) {
+    public T34 (ActionField af, BField bf) {
         super(bf, af, 128, 512, Direction.UP);
         setName("defender");
         setArmor(1);

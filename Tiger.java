@@ -12,7 +12,7 @@ public class Tiger extends AbstractTank {
 
     }
 
-    public Tiger(ActionField af, BField bf, Bullet bullet) throws Exception {
+    public Tiger(ActionField af, BField bf) throws Exception {
         super(af, bf);
         setName("agressor");
         newBaseAgressor();

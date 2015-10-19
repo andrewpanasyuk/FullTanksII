@@ -5,22 +5,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public abstract class AbstractTank implements Destroy{
+public abstract class AbstractTank implements Destroy {
     private String name;
-    private int x;
-    private int y;
+    private volatile boolean missionCompliet;
+    private volatile int x;
+    private volatile int y;
     private Direction direction;
-    protected int speed = 10;
+    protected int speed = 20;
     private ActionField af;
     protected BField bf;
     private int armor;
     protected Bullet bullet;
     protected int power;
-//    private String nameImage;
+    //    private String nameImage;
     private String nameImageUP;
     private String nameImageD;
     private String nameImageL;
@@ -29,9 +32,13 @@ public abstract class AbstractTank implements Destroy{
     private Image imgD;
     private Image imgL;
     private Image imgR;
+
+    private List <Bullet> bulletMagazin = new ArrayList<>();
+//    private Thread controlFire;
+//    private Thread controlFire = new Thread(new Shot(this));
 //    private Image img;
 
-//    public Image getImg() {
+    //    public Image getImg() {
 //        return img;
 //    }
 //
@@ -48,8 +55,7 @@ public abstract class AbstractTank implements Destroy{
     }
 
 
-
-        public String getNameImageD() {
+    public String getNameImageD() {
         return nameImageD;
     }
 
@@ -116,9 +122,17 @@ public abstract class AbstractTank implements Destroy{
     public AbstractTank() {
 
 
-
     }
-    public AbstractTank(ActionField af){
+
+    public List<Bullet> getBulletMagazin() {
+        return bulletMagazin;
+    }
+
+    public void setBulletMagazin(List<Bullet> bulletMagazin) {
+        this.bulletMagazin = bulletMagazin;
+    }
+
+    public AbstractTank(ActionField af) {
         this.af = af;
     }
 
@@ -153,6 +167,8 @@ public abstract class AbstractTank implements Destroy{
         this.direction = direction;
         this.af = af;
         this.bf = bf;
+        missionCompliet = false;
+        new Thread(new Shot(this, af)).start();
 
 //        try {
 //            setImg(ImageIO.read(new File(getNameImage())));
@@ -169,23 +185,28 @@ public abstract class AbstractTank implements Destroy{
     public void move() throws Exception {
 
 
-
         af.processMove(this);
 
-        fire();
+        //fire();
+    }
+
+    public void setMissionCompliet(boolean missionCompliet) {
+        this.missionCompliet = missionCompliet;
+    }
+
+    public boolean getMissionCompliet() {
+        return missionCompliet;
     }
 
     public void fire() throws Exception {
-        ActionListener fire = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //
-            }
-        };
-//        Bullet bullet = new Bullet((x + 25), (y + 25), direction, power);
-        this.setBullet(new Bullet((x + 25), (y + 25), direction, power));
 
-       af.processFire(bullet);
+//        this.bullet.setX(x + 25);
+//        this.bullet.setY(y + 25);
+//        this.bullet.setDirrect(direction);
+//        this.bullet.setArmorPiercing(power);
+        this.setBullet(new Bullet(this));
+
+        af.processFire(getBullet());
 
     }
 
@@ -195,6 +216,7 @@ public abstract class AbstractTank implements Destroy{
     }
 
     public void setBullet(Bullet bullet) {
+
         this.bullet = bullet;
     }
 
@@ -236,9 +258,13 @@ public abstract class AbstractTank implements Destroy{
             } else {
                 this.direction = Direction.RIGHT;
             }
+
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this, af)) {
+//                    fire();
+//                    Thread.sleep(20);
                     move();
+
                     //System.out.println(getName() + " bullet: x =  " + getBullet().getX() + " y =  " + getBullet().getY());
                 }
             }
@@ -259,9 +285,9 @@ public abstract class AbstractTank implements Destroy{
         return coordEagle;
     }
 
-    public void destroyEagle() throws Exception{
-        int x=0;
-        int y=0;
+    public void destroyEagle() throws Exception {
+        int x = 0;
+        int y = 0;
         for (int a = 0; a < 9; a++) {
             for (int b = 0; b < 9; b++) {
                 if (bf.scanQuadrant(a, b).getArmor() > 4) {
@@ -271,8 +297,8 @@ public abstract class AbstractTank implements Destroy{
 
             }
         }
-        moveToQuadrantFire(x+1, y+1);
-        while (bf.scanQuadrant(x, y).getArmor() != 0){
+        moveToQuadrantFire(x + 1, y + 1);
+        while (bf.scanQuadrant(x, y).getArmor() != 0) {
             fire();
         }
     }
@@ -335,6 +361,16 @@ public abstract class AbstractTank implements Destroy{
         this.direction = direction;
     }
 
+    public void waitAction(Action action) throws Exception {
+            af.nextAction(getName(), action);
+
+        //}
+
+        //System.out.println(action.name());
+        // move();
+
+    }
+
     public void moveToQuadrantFire(int v, int h) throws Exception {
         String newQadrant = af.getQuadrantXY(v, h);
         int separator = newQadrant.indexOf("_");
@@ -384,23 +420,22 @@ public abstract class AbstractTank implements Destroy{
         this.y += y;
     }
 
-    public void moves(AbstractTank abstractTank) throws Exception{
+    public void moves(AbstractTank abstractTank) throws Exception {
 //        int covered = 0;
 //        while (covered < 64) {
-            if (abstractTank.getDirection() == Direction.UP) {
-                abstractTank.updateY(-1);
-            } else if (abstractTank.getDirection() == Direction.DOWN) {
-                abstractTank.updateY(1);
-            } else if (abstractTank.getDirection() == Direction.LEFT) {
-                abstractTank.updateX(-1);
-            } else {
-                abstractTank.updateX(1);
-            }
-//            covered += 1;
-            //repaint();
-//            Thread.sleep(abstractTank.getSpeed());
+        if (abstractTank.getDirection() == Direction.UP) {
+            abstractTank.updateY(-1);
+        } else if (abstractTank.getDirection() == Direction.DOWN) {
+            abstractTank.updateY(1);
+        } else if (abstractTank.getDirection() == Direction.LEFT) {
+            abstractTank.updateX(-1);
+        } else {
+            abstractTank.updateX(1);
         }
-
+//            covered += 1;
+        //repaint();
+//            Thread.sleep(abstractTank.getSpeed());
+    }
 
 
     public int getY() {
