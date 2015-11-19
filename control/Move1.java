@@ -1,3 +1,9 @@
+package control;
+
+import filds.ActionField;
+import service.Action;
+import tanks.AbstractTank;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -11,65 +17,62 @@ public class Move1 implements KeyListener {
     private Queue<Action> actionsList;
     volatile private Map<Integer, Boolean> mapKeys;
     private Map<Integer, Action> mapActions;
+    volatile private Action currentAction;
+    private ActionField actionField;
 
 
-    public Move1(AbstractTank abstractTank) {
+    public Move1(AbstractTank abstractTank, ActionField actionField) {
+        this.actionField = actionField;
         this.abstractTank = abstractTank;
         actionsList = new LinkedBlockingQueue<>();
-
+        currentAction = null;
 //        mapKeys = new TreeMap<>();
         mapKeys = new LinkedHashMap<>();
         setKeyStatus();
-
         mapActions = new TreeMap<>();
         setActionsMap();
 
-        readList();
-
-
-    }
-
-    public void readList() {
         new Thread() {
             @Override
             public void run() {
                 while (true) {
 
-                    if (actionsList.size() > 0) {
-                        try {
-                            abstractTank.waitAction(actionsList.peek());
-                            actionsList.remove();
-                        } catch (Exception e) {
+                    try {
+                        abstractTank.waitAction(actionsList.peek());
+                        actionsList.remove();
+                    } catch (Exception e) {
 
-                        }
-                    } else
-                        if (withKeyIsPress() != -1) {
-                           // System.out.println(withKeyIsPress() + " **");
-                            controlPress(withKeyIsPress());
-                            try {
-                                Thread.sleep(100);
-                            } catch (Exception ex) {
-
-                            }
-                        }
-
-
+                    }
                 }
             }
         }.start();
+//        new Thread() {
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (Exception r) {
+//
+//                    }
+//                    if (currentAction == null && withKeyIsPress() != -1) {
+//                        controlPress(withKeyIsPress());
+//                    }
+//                }
+//            }
+//        }.start();
     }
-
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (mapKeys.containsKey(e.getKeyCode())) {
             mapKeys.put(e.getKeyCode(), true);
-            controlPress(e.getKeyCode());
-            try {
-                //Thread.sleep(50);
-            }catch (Exception ee){
+            currentAction = mapActions.get(e.getKeyCode());
+            //System.out.println(currentAction.toString());
+            //actionField.setListAction(new ArrayList<>());
+            //System.out.println(actionField.getListAction().size());
+//            actionField.getListAction().add(currentAction);
 
-            }
+                    controlPress(e.getKeyCode());
         }
     }
 
@@ -80,17 +83,14 @@ public class Move1 implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        new Thread() {
-            @Override
-            public void run() {
-                    mapKeys.put(e.getKeyCode(), false);
-            }
-        }.start();
-
-
+        if (mapKeys.containsKey(e.getKeyCode())) {
+            currentAction = null;
+            mapKeys.put(e.getKeyCode(), false);
+        }
     }
 
     public void controlPress(Integer a) {
+
         if (!actionsList.contains(mapActions.get(a))) {
             actionsList.add(mapActions.get(a));
         }
@@ -100,9 +100,9 @@ public class Move1 implements KeyListener {
     public void setKeyStatus() {
         mapKeys.put(KeyEvent.VK_UP, false);
         mapKeys.put(KeyEvent.VK_DOWN, false);
-        mapKeys.put(KeyEvent.VK_W, false);
+        mapKeys.put(KeyEvent.VK_LEFT, false);
         mapKeys.put(KeyEvent.VK_RIGHT, false);
-        mapKeys.put(KeyEvent.VK_SPACE, false);
+        mapKeys.put(KeyEvent.VK_W, false);
     }
 
     public int withKeyIsPress() {

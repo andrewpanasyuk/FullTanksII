@@ -1,11 +1,18 @@
-package ObjectBF;
+package objectBF;
 
+import service.Destroy;
+import service.Drawable;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by panasyuk on 27.06.2015.
  */
-public class Construct implements Destroy {
+public abstract class Construct implements Destroy, Drawable {
     private int qandrantX;
     private int qandrantY;
     private Color color;
@@ -21,8 +28,12 @@ public class Construct implements Destroy {
     }
 
 
-    public void setImg(Image img) {
-        this.img = img;
+    public void setImg(String name) {
+        try {
+            this.img = ImageIO.read(new File("imageBF/" + name));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getNameImage() {
@@ -67,16 +78,30 @@ public class Construct implements Destroy {
 
     @Override
     public boolean destroy(int a) {
-
+        System.out.println("armor do = " + getArmor());
             setArmor(getArmor() - 1);
             if (getArmor() == 0) {
+                System.out.println("armor posle = " + getArmor());
+//                setNameImage("dor.png");
+//                setImg(getNameImage());
                 return true;
         }
         return false;
     }
 
     @Override
+    public void draw(Graphics g) {
+        g.drawImage(getImg(), getQandrantX()*64, getQandrantY()*64,new ImageObserver() {
+                    @Override
+                    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                        return false;
+                    }
+                });
+    }
+
+    @Override
     public boolean destroy() {
         return false;
     }
+
 }

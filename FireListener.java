@@ -1,7 +1,7 @@
+import tanks.AbstractTank;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 /**
  * Created by panasyuk on 10.10.2015.

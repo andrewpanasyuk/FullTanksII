@@ -1,3 +1,7 @@
+package filds;
+
+import filds.ActionField;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,8 +43,8 @@ public class ControlPanel extends JFrame {
 
     public void startPlay(String name) {
         try {
-//            actionField = new ActionField();
-            actionField.runTheGame();
+//            actionField = new filds.ActionField();
+            //actionField.runTheGame();
         } catch (Exception e) {
 
         }

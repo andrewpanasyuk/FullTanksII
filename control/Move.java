@@ -1,4 +1,8 @@
-import javax.swing.*;
+package control;
+
+import service.Action;
+import tanks.AbstractTank;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -39,7 +43,7 @@ public class Move implements KeyListener {
                 while (a != 14) {
                     //for (int i = 0; i < 15; i++) {
                         if (flag == false) {
-                            System.out.println("I send Action #" + a);
+                            System.out.println("I send service.Action #" + a);
 
                             actionsList.add(a);
                             a++;
@@ -63,7 +67,7 @@ public class Move implements KeyListener {
                 int i = 0;
                 while (true) {
                     if (flag == true) {
-                        System.out.println("I read Action #" + actionsList.peek());
+                        System.out.println("I read service.Action #" + actionsList.peek());
                         i++;
                         actionsList.remove();
                         flag = false;
@@ -198,21 +202,21 @@ public class Move implements KeyListener {
                 mapKeys.put(e.getKeyCode(), true);
                 try {
 //            if (e.getKeyCode() == e.VK_SPACE) {
-//                //nextAction(Action.FIRE);
+//                //nextAction(service.Action.FIRE);
 //            }
 //
 //
 //            if (e.getKeyCode() == e.VK_UP) {
-//                //nextAction(Action.UP);
+//                //nextAction(service.Action.UP);
 //            }
 //            if (e.getKeyCode() == e.VK_RIGHT) {
-//                nextAction(Action.RIGHT);
+//                nextAction(service.Action.RIGHT);
 //            }
 //            if (e.getKeyCode() == e.VK_LEFT) {
-//                nextAction(Action.LEFT);
+//                nextAction(service.Action.LEFT);
 //            }
 //            if (e.getKeyCode() == e.VK_DOWN) {
-//                nextAction(Action.DOWN);
+//                nextAction(service.Action.DOWN);
 //            }
 
                 } catch (Exception ex) {
@@ -231,7 +235,7 @@ public class Move implements KeyListener {
         //System.out.println(e.getKeyCode());
 //        if (e.getKeyCode() == e.VK_SPACE) {
 //            try {
-//                tank.waitAction(Action.FIRE);
+//                tank.waitAction(service.Action.FIRE);
 //            } catch (Exception ex) {
 //
 //            }

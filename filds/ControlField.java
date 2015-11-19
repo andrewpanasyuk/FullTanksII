@@ -1,5 +1,11 @@
-import ObjectBF.Ampty;
-import ObjectBF.Water;
+package filds;
+
+import filds.ActionField;
+import objectBF.Batlefild;
+import objectBF.Empty;
+import objectBF.Water;
+import service.Direction;
+import tanks.AbstractTank;
 
 /**
  * Created by panasyuk on 16.06.2015.
@@ -7,11 +13,11 @@ import ObjectBF.Water;
 public class ControlField {
     private boolean field;
     private boolean woll;
-    private BField bf;
+    private Batlefild bf;
     private AbstractTank abstractTank;
     private ActionField af;
 
-    public static boolean controlTank(BField bf, AbstractTank abstractTank) {
+    public static boolean controlTank(Batlefild bf, AbstractTank abstractTank) {
 //        System.out.println("x = " + abstractTank.getX());
 //        System.out.println("y = " + abstractTank.getY());
         int finish = 512;
@@ -33,7 +39,7 @@ public class ControlField {
             return false;
         }
     }
-    public static boolean controlWoll(BField bf, AbstractTank abstractTank, ActionField af) {
+    public static boolean controlWoll(Batlefild bf, AbstractTank abstractTank, ActionField af) {
         int y = abstractTank.getY() / 64;
         int x = abstractTank.getX() / 64;
         if (abstractTank.getDirection() == Direction.UP && y != 0) {
@@ -45,7 +51,7 @@ public class ControlField {
         } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
             x = x + 1;
         }
-        if (bf.getBatlefield()[y][x] instanceof Ampty || bf.getBatlefield()[y][x] instanceof Water) {
+        if (bf.getBatlefield()[y][x] instanceof Empty || bf.getBatlefield()[y][x] instanceof Water) {
             if (bf.getBatlefield()[y][x] instanceof Water) {
 //                af.paintComponent(Graphics g){
 //
@@ -57,7 +63,7 @@ public class ControlField {
 
 //                af.paintComponent();
 
-//                af.getBatlefield()[y][x] =  new Ampty(x, y);
+//                af.getBatlefield()[y][x] =  new Empty(x, y);
 //                abstractTank.
 
             }

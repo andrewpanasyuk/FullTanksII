@@ -1,19 +1,25 @@
-import ObjectBF.*;
+package objectBF;
+
+import objectBF.*;
+import service.Drawable;
+
+import java.awt.*;
+import java.util.Random;
 
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public class BField {
+public class Batlefild {
     private Construct[][] batlefield;
     public int bfWidth = 576;
     public int bfHeight = 576;
 
-    public BField() {
+    public Batlefild() {
         //String [][]start = makeField();
         this.batlefield = makeField();
     }
 
-    public BField(int i) {
+    public Batlefild(int i) {
         if (i == 1) {
             //String [][]start = makeField();
             this.batlefield = cff();
@@ -26,7 +32,7 @@ public class BField {
         Construct[][] bf = new Construct[9][9];
         for (int i = 0; i < 9; i++) {
             for (int n = 0; n < 9; n++) {
-                int s = Generation.gen(0, 9);
+                int s = new Random().nextInt(9);
                 if (s == 0 || s == 1) {
                     bf[i][n] = new Water(n, i);
                 } else if (s == 2) {
@@ -34,7 +40,7 @@ public class BField {
                 } else if (s == 3) {
                     bf[i][n] = new Rock(n, i);
                 } else {
-                    bf[i][n] = new Ampty(n, i);
+                    bf[i][n] = new Empty(n, i);
                 }
             }
         }
@@ -53,7 +59,7 @@ public class BField {
                 {" ", " ", " ", " ", " ", " ", " ", " ", " "},
                 {" ", " ", " ", "R", "R", "R", "R", " ", " "}
         };
-        System.out.println(bf[1][7]);
+        //System.out.println(bf[1][7]);
 //        {" ", " ", "B", " ", " ", " ", " ", " ", " "},
 //                {" ", " ", "B", "W", "W", "W", " ", " ", " "},
 //                {"B", "B", "B", " ", " ", " ", " ", " ", " "},
@@ -67,18 +73,18 @@ public class BField {
 
 
         Construct[][] constractField = new Construct[9][9];
-        for (int n = 0; n < 9; n++) {
-            for (int i = 0; i < 9; i++) {
-                if (bf[i][n] == "B") {
-                    constractField[i][n] = new Brick(n, i);
-                } else if (bf[i][n] == "R") {
-                    constractField[i][n] = new Rock(n, i);
-                } else if (bf[i][n] == "W") {
-                    constractField[i][n] = new Water(n, i);
-                } else if (bf[i][n] == "E") {
-                    constractField[i][n] = new Eagle(n, i);
+        for (int y = 0; y < 9; y++) {
+            for (int x = 0; x < 9; x++) {
+                if (bf[y][x] == "B") {
+                    constractField[y][x] = new Brick(x, y);
+                } else if (bf[y][x] == "R") {
+                    constractField[y][x] = new Rock(x, y);
+                } else if (bf[y][x] == "W") {
+                    constractField[y][x] = new Water(x, y);
+                } else if (bf[y][x] == "E") {
+                    constractField[y][x] = new Eagle(x, y);
                 } else {
-                    constractField[i][n] = new Ampty(n, i);
+                    constractField[y][x] = new Empty(x, y);
                 }
             }
         }
@@ -113,6 +119,7 @@ public class BField {
         return dimentionX;
 
     }
+
 
     public int getBfWidth() {
         return bfWidth;

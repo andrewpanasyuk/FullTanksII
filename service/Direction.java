@@ -1,3 +1,5 @@
+package service;
+
 /**
  * Created by panasyuk on 16.06.2015.
  */

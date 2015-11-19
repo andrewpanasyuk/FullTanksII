@@ -1,6 +1,7 @@
+import filds.ActionField;
+
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by panasyuk on 16.06.2015.
@@ -10,33 +11,45 @@ public class Launcher {
 //        SplashScreen splashScreen = SplashScreen.getSplashScreen();
 //        Thread.sleep(5000);
 //        splashScreen.close();
-        //ControlPanel cp = new ControlPanel();
+        //filds.ControlPanel cp = new filds.ControlPanel();
 //        System.out.println(Thread.activeCount());
 //        Thread[]threads = new Thread[Thread.activeCount()];
 //        Thread.enumerate(threads);
 //        for (Thread t: threads){
 //        w    System.out.println(t);
 //        }
-        //Move m = new Move();
+        //control.Move m = new control.Move();
 
-//        List<Action> actionList = new ArrayList<>();
-//        actionList.add(Action.DOWN);
-//        actionList.add(Action.FIRE);
+//        List<service.Action> actionList = new ArrayList<>();
+//        actionList.add(service.Action.DOWN);
+//        actionList.add(service.Action.FIRE);
 //        System.out.println(actionList.get(0));
-//        System.out.println(actionList.contains(Action.DOWN));
+//        System.out.println(actionList.contains(service.Action.DOWN));
 
 
-        ActionField actionField = new ActionField();   //****************************************
-//        for (int i = 0; i < Direction.values().length; i++) {
-//            System.out.println(Direction.values()[i]);
+        ActionField actionField = new ActionField();   //*****************************************
+
+//        stack.removeFirst();
+//        System.out.println(stack.getFirst());
+//        for (Iterator<String> i: stack.){
+//
+//        }
+
+
+//        for (int i = 0; i < service.Direction.values().length; i++) {
+//            System.out.println(service.Direction.values()[i]);
 //
 //        }
 //        System.out.println("++");
-//        for (int i = 0; i < Action.values().length; i++) {
-//            System.out.println(Action.values()[i]);
+//        for (int i = 0; i < service.Action.values().length; i++) {
+//            System.out.println(service.Action.values()[i]);
 //
 //        }
-//        actionField.runTheGame();
+        //actionField.getQadrant(1, 1);
+
+
+
+
 
     }
 }

@@ -1,7 +1,15 @@
+package bullet;
+
+import service.Direction;
+import service.Drawable;
+import tanks.AbstractTank;
+
+import java.awt.*;
+
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public class Bullet {
+public class Bullet implements Drawable{
     private int x;
     private int y;
     private int speed = 10;
@@ -10,26 +18,28 @@ public class Bullet {
     //private String nameTank;
     private AbstractTank tank;
 
-    Bullet() {
-        this.x = -100;
+    public Bullet() {
+        this.x = -101;
         this.y = -100;
         this.speed = 10;
         this.dirrect = Direction.UP;
     }
-    Bullet (String nameTank, int x, int y, Direction dirrect, int armorPiercing) {
+    public Bullet (String nameTank, int x, int y, Direction dirrect, int armorPiercing) {
         //this.nameTank = nameTank;
         this.x = x;
         this.y = y;
         this.dirrect = dirrect;
         this.armorPiercing = armorPiercing;
+        this.speed = 10;
 
     }
-    Bullet (AbstractTank tank) {
+    public Bullet (AbstractTank tank) {
         this.tank = tank;
         this.x = tank.getX()+25;
         this.y = tank.getY()+25;
         this.dirrect = tank.getDirection();
         this.armorPiercing = tank.getPower();
+        this.speed = 100;
 
     }
 
@@ -69,6 +79,15 @@ public class Bullet {
         this.y = -100;
     }
 
+//    @Override
+//    public void run() {
+//        try {
+//            tank.fire();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        //setX(tank.getX());
+//    }
 
     public void setX(int x) {
         this.x = x;
@@ -83,6 +102,12 @@ public class Bullet {
     public void updateY (int y) {
 
         setY(this.y + y);
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        g.setColor(Color.YELLOW);
+            g.fillOval(getX(), getY(), 10, 10);
     }
 
     public AbstractTank getTank() {

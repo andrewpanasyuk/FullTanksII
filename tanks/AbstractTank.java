@@ -1,17 +1,28 @@
-import ObjectBF.Destroy;
+package tanks;
 
+
+import bullet.Bullet;
+import filds.ActionField;
+import filds.ControlField;
+import objectBF.Batlefild;
+import service.Action;
+import service.Destroy;
+import service.Direction;
+import service.Drawable;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.image.ImageObserver;
+import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by panasyuk on 16.06.2015.
  */
-public abstract class AbstractTank implements Destroy {
+public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     private String name;
     private volatile boolean missionCompliet;
     private volatile int x;
@@ -19,108 +30,23 @@ public abstract class AbstractTank implements Destroy {
     private Direction direction;
     protected int speed = 20;
     private ActionField af;
-    protected BField bf;
+    protected Batlefild bf;
     private int armor;
     protected Bullet bullet;
     protected int power;
-    //    private String nameImage;
-    private String nameImageUP;
-    private String nameImageD;
-    private String nameImageL;
-    private String nameImageR;
-    private Image imgUP;
-    private Image imgD;
-    private Image imgL;
-    private Image imgR;
+    private String nameImage;
+    private HashMap<Direction, Image> directionImageTank;
+    private Image image;
+    private ExecutorService poolBullet;
+    private int ammunition;
 
-    private List <Bullet> bulletMagazin = new ArrayList<>();
-//    private Thread controlFire;
-//    private Thread controlFire = new Thread(new Shot(this));
-//    private Image img;
+    private List<Bullet> bulletMagazin = new ArrayList<>();
 
-    //    public Image getImg() {
-//        return img;
-//    }
-//
-//    public void setImg(Image img) {
-//        this.img = img;
-//    }
-//
-    public String getNameImageUP() {
-        return nameImageUP;
-    }
-
-    public void setNameImageUP(String nameImageUP) {
-        this.nameImageUP = nameImageUP;
-    }
-
-
-    public String getNameImageD() {
-        return nameImageD;
-    }
-
-    public void setNameImageD(String nameImageD) {
-        this.nameImageD = nameImageD;
-    }
-
-    public String getNameImageL() {
-        return nameImageL;
-    }
-
-    public void setNameImageL(String nameImageL) {
-        this.nameImageL = nameImageL;
-    }
-
-    public String getNameImageR() {
-        return nameImageR;
-    }
-
-    public void setNameImageR(String nameImageR) {
-        this.nameImageR = nameImageR;
-    }
-
-    public Image getImgR() {
-        return imgR;
-    }
-
-    public void setImgR(Image imgR) {
-        this.imgR = imgR;
-    }
-
-    public Image getImgL() {
-        return imgL;
-    }
-
-    public void setImgL(Image imgL) {
-        this.imgL = imgL;
-    }
-
-    public Image getImgD() {
-        return imgD;
-    }
-
-    public void setImgD(Image imgD) {
-        this.imgD = imgD;
-    }
-
-    public Image getImgUP() {
-        return imgUP;
-    }
-
-    public void setImgUP(Image imgUP) {
-        this.imgUP = imgUP;
-    }
-//
-//    public String getNameImageUP() {
-//        return nameImageUP;
-//    }
-//
-//    public void setNameImageUP(String nameImageUP) {
-//        this.nameImageUP = nameImageUP;
-//    }
 
     public AbstractTank() {
-
+        directionImageTank = new HashMap<>();
+        poolBullet = Executors.newFixedThreadPool(3);
+        ammunition = 0;
 
     }
 
@@ -152,35 +78,46 @@ public abstract class AbstractTank implements Destroy {
         this.armor = armor;
     }
 
-    public AbstractTank(ActionField af, BField bf) {
-        this(bf, af, 128, 512, Direction.UP);
-//        try {
-//            setImg(ImageIO.read(new File(getNameImage())));
-//        } catch (IOException e) {
-//            System.out.println("cannot found image: " + getNameImage());
-//        }
+    public boolean controlAmmunition() {
+        ammunition = getAmmunition() - 1;
+        if (ammunition == 0) {
+            return false;
+//            try {
+//                Thread.sleep(500);
+//                setAmmunition(3);
+//
+//            } catch (InterruptedException e) {
+//
+//            }
+
+        }
+        return true;
     }
 
-    public AbstractTank(BField bf, ActionField af, int x, int y, Direction direction) {
+    public AbstractTank(ActionField af, Batlefild bf) {
+        this(bf, af, 128, 512, Direction.UP);
+    }
+
+    @Override
+    public void run() {
+        try {
+            fire();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public AbstractTank(Batlefild bf, ActionField af, int x, int y, Direction direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;
         this.af = af;
         this.bf = bf;
         missionCompliet = false;
-        new Thread(new Shot(this, af)).start();
-
-//        try {
-//            setImg(ImageIO.read(new File(getNameImage())));
-//        } catch (IOException e) {
-//            System.out.println("cannot found image: " + getNameImage());
-//        }
+        //this.bullet = new Bullet(this);
+//        getDirectionImageTank();
     }
 
-    public void turn(Direction direction) throws Exception {
-        this.direction = direction;
-        af.processTurn(this);
-    }
 
     public void move() throws Exception {
 
@@ -188,6 +125,22 @@ public abstract class AbstractTank implements Destroy {
         af.processMove(this);
 
         //fire();
+    }
+
+    public int getAmmunition() {
+        return ammunition;
+    }
+
+    public void setAmmunition(int ammunition) {
+        this.ammunition = ammunition;
+    }
+
+    public ExecutorService getPoolBullet() {
+        return poolBullet;
+    }
+
+    public void setPoolBullet(ExecutorService poolBullet) {
+        this.poolBullet = poolBullet;
     }
 
     public void setMissionCompliet(boolean missionCompliet) {
@@ -204,9 +157,9 @@ public abstract class AbstractTank implements Destroy {
 //        this.bullet.setY(y + 25);
 //        this.bullet.setDirrect(direction);
 //        this.bullet.setArmorPiercing(power);
-        this.setBullet(new Bullet(this));
+        //this.setBullet(new Bullet(this));
 
-        af.processFire(getBullet());
+        af.processFire(this);
 
     }
 
@@ -224,13 +177,13 @@ public abstract class AbstractTank implements Destroy {
 //        while (true) {
 //            int random = Generation.gen(1, 4);
 //            if (random == 1) {
-//                this.direction = Direction.UP;
+//                this.direction = service.Direction.UP;
 //            } else if (random == 2) {
-//                this.direction = Direction.DOWN;
+//                this.direction = service.Direction.DOWN;
 //            } else if (random == 3) {
-//                this.direction = Direction.LEFT;
+//                this.direction = service.Direction.LEFT;
 //            } else {
-//                this.direction = Direction.RIGHT;
+//                this.direction = service.Direction.RIGHT;
 //            }
 //            if (cf.controlTank(bf, this)) {
 //                move();
@@ -248,17 +201,18 @@ public abstract class AbstractTank implements Destroy {
 
     public void moveRandomWoll() throws Exception { // ---------------------------------
         while (true) {
-            int random = Generation.gen(1, 4);
-            if (random == 1) {
+            int random = new Random().nextInt(3);
+            if (random == 0) {
                 this.direction = Direction.UP;
-            } else if (random == 2) {
+
+            } else if (random == 1) {
                 this.direction = Direction.DOWN;
-            } else if (random == 3) {
+            } else if (random == 2) {
                 this.direction = Direction.LEFT;
             } else {
                 this.direction = Direction.RIGHT;
             }
-
+            this.image = getDirectionImageTank().get(direction);
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this, af)) {
 //                    fire();
@@ -305,19 +259,20 @@ public abstract class AbstractTank implements Destroy {
 
     public void moveRandomWollFire() throws Exception { // ---------------------------------
         while (true) {
-            int random = Generation.gen(1, 4);
-            if (random == 1) {
+            int random = new Random().nextInt(3);
+            if (random == 0) {
                 this.direction = Direction.UP;
-            } else if (random == 2) {
+            } else if (random == 1) {
                 this.direction = Direction.DOWN;
-            } else if (random == 3) {
+            } else if (random == 2) {
                 this.direction = Direction.LEFT;
             } else {
                 this.direction = Direction.RIGHT;
             }
+            fire();
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this, af) == false) {
-                    fire();
+
                     //System.out.println("bumc");
                 }
                 System.out.println("r = " + random + "; x = " + getX() + "; y = " + getY() + "; f - " + "fff");
@@ -362,9 +317,10 @@ public abstract class AbstractTank implements Destroy {
     }
 
     public void waitAction(Action action) throws Exception {
-            af.nextAction(getName(), action);
+        af.nextAction(getName(), action);
 
-        //}
+
+//        }
 
         //System.out.println(action.name());
         // move();
@@ -476,5 +432,32 @@ public abstract class AbstractTank implements Destroy {
         return false;
     }
 
+    public HashMap<Direction, Image> getDirectionImageTank() {
+        directionImageTank = new HashMap<>();
+        // System.out.println(getName());
+        try {
+            directionImageTank.put(Direction.UP, ImageIO.read(new File("imageBF/" + getName() + "_UP.png")));
+            System.out.println("imageBF/" + getName() + "_UP.png");
+            directionImageTank.put(Direction.RIGHT, ImageIO.read(new File("imageBF/" + getName() + "_R.png")));
+            directionImageTank.put(Direction.LEFT, ImageIO.read(new File("imageBF/" + getName() + "_L.png")));
+            directionImageTank.put(Direction.DOWN, ImageIO.read(new File("imageBF/" + getName() + "_D.png")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return directionImageTank;
+    }
 
+    public void setDirectionImageTank(HashMap<Direction, Image> directionImageTank) {
+        this.directionImageTank = directionImageTank;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        g.drawImage(directionImageTank.get(direction), getX(), getY(), new ImageObserver() {
+            @Override
+            public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+                return false;
+            }
+        });
+    }
 }

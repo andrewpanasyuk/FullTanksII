@@ -1,4 +1,4 @@
-package ObjectBF;
+package service;
 
 /**
  * Created by panasyuk on 27.06.2015.
