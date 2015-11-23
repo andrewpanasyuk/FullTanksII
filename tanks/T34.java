@@ -1,12 +1,8 @@
 package tanks;
 
 import filds.ActionField;
-import objectBF.Batlefild;
+import filds.Batlefild;
 import service.Direction;
-
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by panasyuk on 23.06.2015.
@@ -23,7 +19,7 @@ public class T34 extends AbstractTank {
     }
 
 
-//    public tanks.T34(objectBF.Batlefild bf, filds.ActionField af, int x, int y, service.Direction direction) {
+//    public tanks.T34(filds.Batlefild bf, filds.ActionField af, int x, int y, service.Direction direction) {
 //        super(bf, af, x, y, service.Direction.UP);
 //        setName("defender");
 //        setArmor(1);

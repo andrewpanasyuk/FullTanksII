@@ -1,15 +1,8 @@
 package tanks;
 
 import filds.ActionField;
-import objectBF.Batlefild;
+import filds.Batlefild;
 import service.Direction;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Created by panasyuk on 17.06.2015.

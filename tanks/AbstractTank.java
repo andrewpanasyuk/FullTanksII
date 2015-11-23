@@ -4,7 +4,7 @@ package tanks;
 import bullet.Bullet;
 import filds.ActionField;
 import filds.ControlField;
-import objectBF.Batlefild;
+import filds.Batlefild;
 import service.Action;
 import service.Destroy;
 import service.Direction;

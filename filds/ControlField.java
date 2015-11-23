@@ -1,7 +1,5 @@
 package filds;
 
-import filds.ActionField;
-import objectBF.Batlefild;
 import objectBF.Empty;
 import objectBF.Water;
 import service.Direction;

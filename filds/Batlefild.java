@@ -1,4 +1,6 @@
-package objectBF;
+package filds;
+
+import objectBF.*;
 
 import java.util.Random;
 

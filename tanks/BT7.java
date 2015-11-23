@@ -2,7 +2,7 @@ package tanks;
 
 import bullet.Bullet;
 import filds.ActionField;
-import objectBF.Batlefild;
+import filds.Batlefild;
 import service.Direction;
 
 /**
