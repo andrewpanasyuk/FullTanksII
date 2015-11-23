@@ -9,7 +9,7 @@ public class Eagle extends Construct {
         setQandrantY(y);
         setNameImage("eagle.png");
         setImg(getNameImage());
-        setArmor(20);
+        setArmor(5);
     }
 }
 

@@ -19,7 +19,7 @@ public class Bullet implements Drawable{
     private AbstractTank tank;
 
     public Bullet() {
-        this.x = -101;
+        this.x = -100;
         this.y = -100;
         this.speed = 10;
         this.dirrect = Direction.UP;
@@ -77,8 +77,13 @@ public class Bullet implements Drawable{
     public void destroyBullet(){
         this.x = -100;
         this.y = -100;
+//        setTank(null);
+
     }
 
+    public void setTank(AbstractTank tank) {
+        this.tank = tank;
+    }
 //    @Override
 //    public void run() {
 //        try {

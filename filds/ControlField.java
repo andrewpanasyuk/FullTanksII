@@ -18,10 +18,10 @@ public class ControlField {
     private ActionField af;
 
     public static boolean controlTank(Batlefild bf, AbstractTank abstractTank) {
-//        System.out.println("x = " + abstractTank.getX());
-//        System.out.println("y = " + abstractTank.getY());
+        System.out.println("x = " + abstractTank.getX());
+        System.out.println("y = " + abstractTank.getY());
         int finish = 512;
-        int nextPosition = -100;
+        int nextPosition = 0;
 
 
         if (abstractTank.getDirection() == Direction.UP) {
@@ -33,7 +33,7 @@ public class ControlField {
         } else {
             nextPosition = abstractTank.getX() + 1;
         }
-        if (nextPosition > 0 && nextPosition < finish) {
+        if (nextPosition >= 0 && nextPosition <= finish) {
             return true;
         } else {
             return false;
@@ -52,21 +52,21 @@ public class ControlField {
             x = x + 1;
         }
         if (bf.getBatlefield()[y][x] instanceof Empty || bf.getBatlefield()[y][x] instanceof Water) {
-            if (bf.getBatlefield()[y][x] instanceof Water) {
-//                af.paintComponent(Graphics g){
+//            if (bf.getBatlefield()[y][x] instanceof Water) {
+////                af.paintComponent(Graphics g){
+////
+////                };
+//               // bf.getBatlefield()[y][x] = new Water(x, y, 1);
 //
-//                };
-               // bf.getBatlefield()[y][x] = new Water(x, y, 1);
-
-
-
-
-//                af.paintComponent();
-
-//                af.getBatlefield()[y][x] =  new Empty(x, y);
-//                abstractTank.
-
-            }
+//
+//
+//
+////                af.paintComponent();
+//
+////                af.getBatlefield()[y][x] =  new Empty(x, y);
+////                abstractTank.
+//
+//            }
             return true;
         } else {
             return false;

@@ -39,11 +39,13 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     private Image image;
     private ExecutorService poolBullet;
     private int ammunition;
+    private Action currentAction;
 
     private List<Bullet> bulletMagazin = new ArrayList<>();
 
 
     public AbstractTank() {
+        currentAction = null;
         directionImageTank = new HashMap<>();
         poolBullet = Executors.newFixedThreadPool(3);
         ammunition = 0;
@@ -79,19 +81,11 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public boolean controlAmmunition() {
-        ammunition = getAmmunition() - 1;
-        if (ammunition == 0) {
-            return false;
-//            try {
-//                Thread.sleep(500);
-//                setAmmunition(3);
-//
-//            } catch (InterruptedException e) {
-//
-//            }
-
+        if (ammunition > 0){
+            ammunition = getAmmunition() - 1;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public AbstractTank(ActionField af, Batlefild bf) {
@@ -113,18 +107,13 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         this.direction = direction;
         this.af = af;
         this.bf = bf;
-        missionCompliet = false;
-        //this.bullet = new Bullet(this);
-//        getDirectionImageTank();
+        missionCompliet = true;
     }
 
 
     public void move() throws Exception {
-
-
+        System.out.println(getX() + "_" + getY());
         af.processMove(this);
-
-        //fire();
     }
 
     public int getAmmunition() {
@@ -152,13 +141,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public void fire() throws Exception {
-
-//        this.bullet.setX(x + 25);
-//        this.bullet.setY(y + 25);
-//        this.bullet.setDirrect(direction);
-//        this.bullet.setArmorPiercing(power);
-        //this.setBullet(new Bullet(this));
-
         af.processFire(this);
 
     }
@@ -173,23 +155,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         this.bullet = bullet;
     }
 
-//    public void moveRandom() throws Exception { // ---------------------------------
-//        while (true) {
-//            int random = Generation.gen(1, 4);
-//            if (random == 1) {
-//                this.direction = service.Direction.UP;
-//            } else if (random == 2) {
-//                this.direction = service.Direction.DOWN;
-//            } else if (random == 3) {
-//                this.direction = service.Direction.LEFT;
-//            } else {
-//                this.direction = service.Direction.RIGHT;
-//            }
-//            if (cf.controlTank(bf, this)) {
-//                move();
-//            }
-//        }
-//    }
 
     public int getPower() {
         return power;
@@ -239,7 +204,41 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         return coordEagle;
     }
 
+
     public void destroyEagle() throws Exception {
+        //bf.getBatlefield()
+        int x = 0;
+        int y = 0;
+        for (int a = 0; a < 9; a++) {
+            for (int b = 0; b < 9; b++) {
+                if (bf.scanQuadrant(a, b).getArmor() > 4) {
+                    y = a;
+                    x = b;
+                }
+
+            }
+        }
+//        moveToQuadrant(x, y);
+        moveToQuadrantFire(x, y);
+
+//        while (bf.scanQuadrant(x, y).getArmor() != 0) {
+////            fire();
+//        }
+    }
+    public boolean canIseeEnemy(String enemy){
+        return false;
+    }
+    public String whereEnemy(String enemy){
+        String coord;
+        int x = af.getTanks().get(enemy).getX();
+        int y = af.getTanks().get(enemy).getY();
+        coord = Integer.toString(x) + "_" + Integer.toString(y);
+        return coord;
+    }
+    public void destroyEnemy() throws Exception {
+        String enemy = af.whoIsEnamy(name);
+
+        canIseeEnemy(enemy);
         int x = 0;
         int y = 0;
         for (int a = 0; a < 9; a++) {
@@ -258,27 +257,34 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public void moveRandomWollFire() throws Exception { // ---------------------------------
-        while (true) {
+        while (getArmor()>0) {
             int random = new Random().nextInt(3);
             if (random == 0) {
+//                af.nextAction(name, Action.UP);
                 this.direction = Direction.UP;
             } else if (random == 1) {
+//                af.nextAction(name, Action.DOWN);
                 this.direction = Direction.DOWN;
             } else if (random == 2) {
+//                af.nextAction(name, Action.LEFT);
                 this.direction = Direction.LEFT;
             } else {
+//                af.nextAction(name, Action.RIGHT);
                 this.direction = Direction.RIGHT;
             }
+            System.out.println(getX()/64 + "_" + getY()/64);
+            move();
+//            af.nextAction(name, Action.FIRE);
             fire();
-            if (ControlField.controlTank(bf, this)) {
-                if (ControlField.controlWoll(bf, this, af) == false) {
-
-                    //System.out.println("bumc");
-                }
-                System.out.println("r = " + random + "; x = " + getX() + "; y = " + getY() + "; f - " + "fff");
-                move();
-
-            }
+//            if (ControlField.controlTank(bf, this)) {
+//                if (ControlField.controlWoll(bf, this, af) == false) {
+//
+//                    //System.out.println("bumc");
+//                }
+//                System.out.println("r = " + random + "; x = " + getX() + "; y = " + getY() + "; f - " + "fff");
+//                move();
+//
+//            }
         }
     }
 
@@ -316,7 +322,9 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         this.direction = direction;
     }
 
+
     public void waitAction(Action action) throws Exception {
+        currentAction = action;
         af.nextAction(getName(), action);
 
 
@@ -327,39 +335,73 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
     }
 
+    public void setCurrentAction(Action currentAction) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        if (currentAction != Action.FIRE) {
+            this.currentAction = currentAction;
+//        }
+    }
+
+    public Action getCurrentAction() {
+        return currentAction;
+    }
+
     public void moveToQuadrantFire(int v, int h) throws Exception {
+        System.out.println(v + " ************* " + h);
         String newQadrant = af.getQuadrantXY(v, h);
         int separator = newQadrant.indexOf("_");
-        int goalY = Integer.parseInt(newQadrant.substring(0, separator));
-        int goalX = Integer.parseInt(newQadrant.substring(separator + 1));
-        if (x < goalX) {
-            while (x < goalX) {
-                this.direction = Direction.RIGHT;
-                move();
+        int goalY = v*64;
+        int goalX = h*64;
+        System.out.println(goalX + " _________ " + goalY);
+        while (af.getGameStatus()) {
+            if (x < goalX) {
+                while (x < goalX) {
+                    this.direction = Direction.RIGHT;
+                    move();
+                    if (af.iSeeWall(name, Action.RIGHT)) {
+                        fire();
+                    }
 
-            }
-        } else {
-            while (x > goalX) {
-                this.direction = Direction.LEFT;
-                move();
+                }
+            } else {
+                while (x > goalX) {
+                    this.direction = Direction.LEFT;
+                    move();
+                    if (af.iSeeWall(name, Action.LEFT)) {
+                        fire();
+                    }
 
-            }
-        }
-
-
-        if (y < goalY) {
-            while (y < goalY) {
-                this.direction = Direction.DOWN;
-                move();
-
-            }
-        } else {
-            while (y > goalY) {
-                this.direction = Direction.UP;
-                move();
-
+                }
             }
 
+
+            if (y < goalY) {
+                while (y < goalY) {
+                    this.direction = Direction.DOWN;
+                    move();
+                    if (af.iSeeWall(name, Action.DOWN)) {
+                        fire();
+                    }
+
+                }
+            } else {
+                while (y > goalY) {
+                    this.direction = Direction.UP;
+                    move();
+                    if (af.iSeeWall(name, Action.UP)) {
+                        fire();
+                    }
+
+                }
+
+            }
+            if (bf.scanQuadrant(goalX, goalY).getArmor() == 0){
+                af.setGameStatus(false);
+            }
         }
 
     }
@@ -421,6 +463,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         if (getArmor() == 0) {
             setY(-100);
             setX(-100);
+
             return true;
 
         }

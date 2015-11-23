@@ -35,11 +35,36 @@ public class Move1 implements KeyListener {
         new Thread() {
             @Override
             public void run() {
+                //Action temp = null;
                 while (true) {
 
                     try {
-                        abstractTank.waitAction(actionsList.peek());
-                        actionsList.remove();
+                        //System.out.println(actionField.getCurrent() + " /////");
+                        if (abstractTank.getCurrentAction() != actionsList.peek()) {
+                            abstractTank.waitAction(actionsList.poll());
+//                            actionsList.remove();
+                        }
+//                        Action temp = actionsList.poll();
+//
+//                        if (currentAction != null) {
+//                            System.out.println(currentAction);
+//                            abstractTank.waitAction(currentAction);
+//                            System.out.println(actionField.getCurrent() + " +++++++++++++++++++++++++");
+//                        }
+//                        if (actionField.getCurrent() != currentAction) {
+//                            //System.out.println(temp);
+//                        abstractTank.waitAction(currentAction);
+                            try {
+                        Thread.sleep(50);
+                    } catch (Exception r) {
+
+                    }
+                            //actionsList.remove();
+//                        } else {
+//                            abstractTank.waitAction(temp);
+                            //actionsList.remove();
+
+//                        }
                     } catch (Exception e) {
 
                     }
@@ -67,6 +92,15 @@ public class Move1 implements KeyListener {
         if (mapKeys.containsKey(e.getKeyCode())) {
             mapKeys.put(e.getKeyCode(), true);
             currentAction = mapActions.get(e.getKeyCode());
+//            if (mapActions.get(e.getKeyCode()) != Action.FIRE) {
+//                currentAction = mapActions.get(e.getKeyCode());
+//            } else if (mapActions.get(e.getKeyCode()) == Action.FIRE) {
+//                try {
+//                    actionField.nextAction(abstractTank.getName(), Action.FIRE);
+//                } catch (Exception e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
             //System.out.println(currentAction.toString());
             //actionField.setListAction(new ArrayList<>());
             //System.out.println(actionField.getListAction().size());

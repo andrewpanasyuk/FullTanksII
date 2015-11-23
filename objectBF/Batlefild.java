@@ -1,9 +1,5 @@
 package objectBF;
 
-import objectBF.*;
-import service.Drawable;
-
-import java.awt.*;
 import java.util.Random;
 
 /**
@@ -15,13 +11,11 @@ public class Batlefild {
     public int bfHeight = 576;
 
     public Batlefild() {
-        //String [][]start = makeField();
         this.batlefield = makeField();
     }
 
     public Batlefild(int i) {
         if (i == 1) {
-            //String [][]start = makeField();
             this.batlefield = cff();
         } else {
             this.batlefield = makeField();
@@ -49,27 +43,16 @@ public class Batlefild {
 
     public Construct[][] cff() {
         String[][] bf = new String[][]{
-                {"E", " ", "W", " ", "B", " ", " ", " ", " "},
-                {" ", " ", "W", " ", "B", " ", " ", " ", " "},
-                {"W", "W", "W", " ", "B", "B", "B", "B", "R"},
+                {" ", " ", " ", " ", "B", " ", " ", " ", " "},
+                {" ", " ", " ", " ", "B", " ", " ", " ", " "},
+                {"W", " ", " ", " ", "B", "B", "B", "B", "R"},
                 {"R", " ", " ", " ", " ", " ", " ", " ", "R"},
                 {"R", " ", " ", " ", " ", " ", " ", " ", "R"},
-                {"R", "R", "R", " ", " ", " ", " ", " ", "R"},
-                {" ", " ", " ", " ", " ", " ", " ", " ", "R"},
-                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-                {" ", " ", " ", "R", "R", "R", "R", " ", " "}
+                {"B", "B", "B", " ", " ", " ", " ", " ", "R"},
+                {" ", " ", "W", " ", "W", " ", "W", " ", "R"},
+                {" ", " ", " ", "B", "B", "B", "W", " ", " "},
+                {" ", " ", " ", "R", "E", "R", "W", " ", " "}
         };
-        //System.out.println(bf[1][7]);
-//        {" ", " ", "B", " ", " ", " ", " ", " ", " "},
-//                {" ", " ", "B", "W", "W", "W", " ", " ", " "},
-//                {"B", "B", "B", " ", " ", " ", " ", " ", " "},
-//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-//                {" ", " ", " ", "R", " ", " ", " ", " ", " "},
-//                {"W", " ", " ", "R", "R", " ", " ", " ", " "},
-//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-//                {" ", " ", " ", " ", " ", " ", " ", " ", " "},
-//                {" ", "E", " ", " ", " ", " ", " ", " ", " "}
-//        };
 
 
         Construct[][] constractField = new Construct[9][9];
@@ -101,7 +84,10 @@ public class Batlefild {
     }
 
     public Construct scanQuadrant(int x, int y) {
-        return batlefield[y][x];
+        if (x<9 && y < 9) {
+            return batlefield[y][x];
+        }
+        return null;
     }
 
     public void updateQuadrant(int x, int y, Construct newParametr) {

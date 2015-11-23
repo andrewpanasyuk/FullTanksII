@@ -22,6 +22,7 @@ public class T34 extends AbstractTank {
 
     }
 
+
 //    public tanks.T34(objectBF.Batlefild bf, filds.ActionField af, int x, int y, service.Direction direction) {
 //        super(bf, af, x, y, service.Direction.UP);
 //        setName("defender");

@@ -1,6 +1,7 @@
 package filds;
 
 import bullet.Bullet;
+import control.History;
 import control.Move1;
 import objectBF.*;
 import service.Action;
@@ -24,39 +25,34 @@ import javax.swing.*;
 public class ActionField extends JPanel {
     private JFrame frame;
     private Batlefild batleField;
-    private Bullet bullet;
-    private Map<String, AbstractTank> tanks = new TreeMap<>();
+    private volatile Map<String, AbstractTank> tanks = new TreeMap<>();
     private volatile Map<String, Action> actionMap = new TreeMap<>();
     public ActionField actionField;
     volatile public Map<String, Bullet> bullets;
-
-
+    private boolean gameStatus;
+    private long startTime;
     volatile private Queue<Action> listAction;
     private ExecutorService poolThread;
     private ExecutorService poolBullet;
     private Queue<Bullet> bulletList;
-//    private List<String> listAction;
+    private List<String> historyGame;
+    Action current;
 
     public ActionField() throws Exception {
+        current = null;
+        historyGame = new ArrayList<>();
+        startTime = System.currentTimeMillis();
+        gameStatus = true;
         batleField = new Batlefild(1);
         tanks.put("defender", new T34(this, batleField));
         tanks.put("agressor", new Tiger(this, batleField));
-        //bullet = new Bullet();
         bulletList = new ArrayDeque<>();
 
         listAction = new ArrayBlockingQueue<Action>(5);
         poolThread = Executors.newFixedThreadPool(20);
         poolBullet = Executors.newFixedThreadPool(3);
-
         bullets = new LinkedHashMap<>();
-        // bulletsActive = new LinkedList<>();
-
         createGamePanel();
-//        while (true) {
-////            System.out.println("size = " + poolThread.);
-//            Thread.sleep(2000);
-//        }
-
     }
 
     public void createGamePanel() {
@@ -69,8 +65,6 @@ public class ActionField extends JPanel {
         frame.pack();
         repaintFrame();
         selectTanksPanel();
-
-//        startGame();
     }
 
     public Queue<Action> getListAction() {
@@ -90,8 +84,10 @@ public class ActionField extends JPanel {
                 con.draw(g);
             }
         }
-        tanks.get("defender").draw(g);
-        tanks.get("agressor").draw(g);
+        Set<String> name = tanks.keySet();
+        for (String a : name) {
+            tanks.get(a).draw(g);
+        }
         Iterator<Bullet> bulletIterator = bulletList.iterator();
         while (bulletIterator.hasNext()) {
             bulletIterator.next().draw(g);
@@ -125,6 +121,45 @@ public class ActionField extends JPanel {
         mes.add(agressor, new GridBagConstraints(0, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
         mes.add(defender, new GridBagConstraints(1, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
         selectPanel.setContentPane(mes);
+        selectPanel.setVisible(true);
+        selectPanel.pack();
+
+
+    }
+
+    public Map<String, AbstractTank> getTanks() {
+        return tanks;
+    }
+
+    public void finalPanel(String nameWinner) {
+        JFrame selectPanel = new JFrame("Final!!!");
+        selectPanel.setMinimumSize(new Dimension(350, 250));
+        selectPanel.setLocation(500, 250);
+        JPanel mes = new JPanel();
+        mes.setLayout(new GridBagLayout());
+        JLabel txt = new JLabel("Winner - " + nameWinner);
+        //JButton agressor = new JButton("agressor");
+        JButton repeat = new JButton("Repeat rec. Game");
+        //agressor.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                //selectPanel.setVisible(false);
+//                //startGame("agressor");
+//            }
+//        });
+        repeat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectPanel.setVisible(false);
+
+                povtor();
+//
+            }
+        });
+        mes.add(txt, new GridBagConstraints(0, 0, 0, 1, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
+//        mes.add(agressor, new GridBagConstraints(0, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
+        mes.add(repeat, new GridBagConstraints(1, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
+        selectPanel.setContentPane(mes);
 
 
         selectPanel.setVisible(true);
@@ -133,30 +168,109 @@ public class ActionField extends JPanel {
 
     }
 
+    public void restarParam() {
+        batleField = new Batlefild(1);
+        tanks.clear();
+        tanks.put("defender", new T34(this, batleField));
+        try {
+            tanks.put("agressor", new Tiger(this, batleField));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void povtor() {
+        poolThread.submit(
+                new Thread() {
+                    @Override
+                    public void run() {
+                        restarParam();
+                        Long t = 0l;
+                        int d = 0;
+                        String ss;
+                        History h = new History();
+                        List l = null;
+                        try {
+                            l = h.repeatGame();
+                            for (int i = 0; i < l.size(); i++) {
+
+                                ss = (String) l.get(i);
+                                int f = ss.indexOf("_");
+                                t = Long.valueOf(ss.substring(0, f));
+                                String n = ss.substring(f + 1, ss.indexOf("_", f + 1));
+                                Action a = Action.valueOf(ss.substring(ss.lastIndexOf("_") + 1, ss.length()));
+                                Thread.sleep(t);
+                                if (a != Action.FIRE) {
+                                    Direction direction = Direction.valueOf(ss.substring(ss.lastIndexOf("_") + 1, ss.length()));
+                                    if (tanks.get(n).getDirection() != direction) {
+                                        tanks.get(n).setDirection(direction);
+                                    } else {
+                                        poolThread.submit(new Thread() {
+                                                              public void run() {
+                                                                  try {
+                                                                      tanks.get(n).move();
+                                                                  } catch (Exception e) {
+                                                                      e.printStackTrace();
+                                                                  }
+                                                              }
+                                                          }
+                                        );
+                                    }
+
+                                } else {
+                                    poolBullet.submit(
+                                            new Thread() {
+                                                @Override
+                                                public void run() {
+                                                    try {
+                                                        tanks.get(n).fire();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                    );
+
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+
+    }
+
 
     public ActionField getActionField() {
         return actionField;
     }
 
+    public void recHistoryGame(String nameTank, Action action) {
+        if (action != null) {
+            Long timeOfAction = System.currentTimeMillis();
+            Long delta = timeOfAction - startTime;
+            startTime = timeOfAction;
+            String history = Long.toString(delta) + "_" + nameTank + "_" + action;
+            historyGame.add(history);
+        }
+
+    }
+
     public void nextAction(String nameTank, Action action) throws Exception {
-        Action current = null;
-        //System.out.println(action.toString());
         if (action != Action.FIRE) {
             if (iCanDoThisAction(nameTank, action)) {
-
-//                System.out.println("xx = " + tanks.get(nameTank).getX() / 64 + " yy = " + tanks.get(nameTank).getY() / 64);
-
-                //listAction.add(nameTank + "_" + action.toString());
-                current = action;
 
                 synchronized (tanks.get(nameTank)) {
                     tanks.get(nameTank).setMissionCompliet(true);
                     actionMap.put(nameTank, action);
+                    recHistoryGame(nameTank, action);
                     tanks.get(nameTank).notify();
                 }
             }
         } else if (action == Action.FIRE) {
-            //tanks.get(nameTank).getPoolBullet().submit(new Bullet().run());
+            recHistoryGame(nameTank, action);
             iWantToFire(nameTank, action);
         } else if (iCanDoThisAction(nameTank, action) == false) {
             actionMap.remove(nameTank, action);
@@ -166,14 +280,11 @@ public class ActionField extends JPanel {
 
     public void iWantToFire(String nameTank, Action action) throws Exception {
         if (tanks.get(nameTank).controlAmmunition()) {
-//        poolThread.submit(tanks.get(nameTank));
             poolBullet.submit(tanks.get(nameTank));
         } else {
-            Thread.sleep(500);
+            Thread.sleep(50);
             tanks.get(nameTank).setAmmunition(3);
         }
-//        poolBullet.
-//        tanks.get(nameTank).getPoolBullet().submit();
 
     }
 
@@ -182,40 +293,34 @@ public class ActionField extends JPanel {
         if (action == Action.FIRE) {
             return true;
         }
-
         if (action.toString() != tanks.get(nameTank).getDirection().toString()) {
             return true;
         }
         if (!controlField(nameTank, action)) {
-
-            System.out.println(controlField(nameTank, action));
             return false;
         }
-
         if (iSeeWall(nameTank, action)) {
             return false;
         }
         return true;
-
-
     }
 
     public boolean iSeeWall(String nameTank, Action action) {
-
-        int x = tanks.get(nameTank).getX() / 64;
-        int y = tanks.get(nameTank).getY() / 64;
-
-        if (action == Action.UP) {
-            y = y - 1;
-        } else if (action == Action.DOWN) {
-            y = y + 1;
-        } else if (action == Action.LEFT) {
-            x = x - 1;
-        } else if (action == Action.RIGHT) {
-            x = x + 1;
-        }
-        if (batleField.scanQuadrant(x, y).getArmor() > 0) {
-            return true;
+        if (controlField(nameTank, action)) {
+            int x = tanks.get(nameTank).getX() / 64;
+            int y = tanks.get(nameTank).getY() / 64;
+            if (action == Action.UP) {
+                y = y - 1;
+            } else if (action == Action.DOWN) {
+                y = y + 1;
+            } else if (action == Action.LEFT) {
+                x = x - 1;
+            } else if (action == Action.RIGHT) {
+                x = x + 1;
+            }
+            if (batleField.scanQuadrant(x, y).getArmor() > 0) {
+                return true;
+            }
         }
         return false;
     }
@@ -223,7 +328,6 @@ public class ActionField extends JPanel {
     public boolean controlField(String nameTank, Action action) {
         int x = tanks.get(nameTank).getX() / 64;
         int y = tanks.get(nameTank).getY() / 64;
-
         if (action == Action.UP) {
             y = y - 1;
         } else if (action == Action.DOWN) {
@@ -234,7 +338,6 @@ public class ActionField extends JPanel {
             x = x + 1;
         }
         if (y >= 0 && y <= 8 && x >= 0 && x <= 8) {
-            System.out.println("x = " + x + "y = " + y);
             return true;
         }
         return false;
@@ -242,7 +345,7 @@ public class ActionField extends JPanel {
 
 
     public void processMove(AbstractTank abstractTank) throws Exception {
-        if (ControlField.controlWoll(batleField, abstractTank, actionField)) {
+        if (ControlField.controlWoll(batleField, abstractTank, actionField) && ControlField.controlTank(batleField, abstractTank)) {
             moveTank(abstractTank);
         }
     }
@@ -253,7 +356,6 @@ public class ActionField extends JPanel {
             while (covered < 64) {
                 if (abstractTank.getDirection() == Direction.UP) {
                     abstractTank.updateY(-1);
-
                 } else if (abstractTank.getDirection() == Direction.DOWN) {
                     abstractTank.updateY(1);
                 } else if (abstractTank.getDirection() == Direction.LEFT) {
@@ -265,17 +367,14 @@ public class ActionField extends JPanel {
                 Thread.sleep(abstractTank.getSpeed());
                 abstractTank.setMissionCompliet(false);
             }
-
         }
         abstractTank.setMissionCompliet(false);
     }
 
     public void processFire(AbstractTank abstractTank) throws Exception {
         Bullet bullet = new Bullet(abstractTank);
-//        bullet = new Bullet(abstractTank);
         bulletList.add(bullet);
         int counter = 0;
-
         while (bullet.getX() >= -14 && bullet.getX() <= 590
                 && bullet.getY() >= -14 && bullet.getY() <= 590) {
             if (bullet.getDirrect() == Direction.UP) {
@@ -286,21 +385,16 @@ public class ActionField extends JPanel {
                 bullet.updateX(-1);
             } else {
                 bullet.updateX(1);
-
             }
             counter++;
-
             Thread.sleep(5);
             if (counter > 25) {
                 if (processInterception(bullet)) {
-                    //bulletList.poll();
                     bullet.destroyBullet();
                 }
             }
         }
-        //bulletList.poll();
         bullet.destroyBullet();
-
     }
 
     public String whoIsEnamy(String tank) {
@@ -316,7 +410,6 @@ public class ActionField extends JPanel {
 
     public boolean processInterception(Bullet bullet) throws Exception {
         String enemy = whoIsEnamy(bullet.getTank().getName());
-
         String qad = getQadrant(bullet.getY(), bullet.getX());
         int separator = qad.indexOf("_");
         int y = Integer.parseInt(qad.substring(0, separator));
@@ -372,7 +465,7 @@ public class ActionField extends JPanel {
                     @Override
                     public void run() {
                         try {
-                            tanks.get(whoIsEnamy(nameTank)).moveRandomWollFire();
+                            tanks.get(whoIsEnamy(nameTank)).destroyEagle();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -383,13 +476,37 @@ public class ActionField extends JPanel {
                 new Thread() {
                     @Override
                     public void run() {
-                        System.out.println(Thread.currentThread().getName().toString());
+                        while (gameStatus) {
+                            Set<String> name = tanks.keySet();
+                            for (String a : name) {
+                                if (tanks.get(a).getArmor() == 0) {
+                                    gameStatus = false;
+                                    try {
+                                        History history = new History();
+                                        history.addHistory(historyGame);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    finalPanel(whoIsEnamy(a));
+                                }
+                            }
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
 
+        poolThread.submit(
+                new Thread() {
+                    @Override
+                    public void run() {
                         try {
                             frame.addKeyListener(new Move1(tanks.get(nameTank), actionField));
                             while (true) {
                                 synchronized (tanks.get(nameTank)) {
-
                                     tanks.get(nameTank).wait();
                                     if (tanks.get(nameTank).getDirection().toString().equals(actionMap.get(nameTank).toString())) {
                                         moveTank(tanks.get(nameTank));
@@ -397,11 +514,10 @@ public class ActionField extends JPanel {
                                         tanks.get(nameTank).setDirection(Direction.values()[numberAction(actionMap.get(nameTank))]);
                                         tanks.get(nameTank).setMissionCompliet(false);
                                     }
+                                    tanks.get(nameTank).setCurrentAction(null);
                                     tanks.get(nameTank).notify();
                                 }
-
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -411,7 +527,6 @@ public class ActionField extends JPanel {
 
 
     public void repaintFrame() {
-
         Thread t = new Thread() {
             @Override
             public void run() {
@@ -433,5 +548,19 @@ public class ActionField extends JPanel {
         }
     }
 
+    public boolean getGameStatus() {
+        return gameStatus;
+    }
 
+    public void setGameStatus(boolean gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public Action getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Action current) {
+        this.current = current;
+    }
 }
