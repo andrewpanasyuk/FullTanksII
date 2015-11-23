@@ -138,15 +138,7 @@ public class ActionField extends JPanel {
         JPanel mes = new JPanel();
         mes.setLayout(new GridBagLayout());
         JLabel txt = new JLabel("Winner - " + nameWinner);
-        //JButton agressor = new JButton("agressor");
         JButton repeat = new JButton("Repeat rec. Game");
-        //agressor.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                //selectPanel.setVisible(false);
-//                //startGame("agressor");
-//            }
-//        });
         repeat.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,7 +149,6 @@ public class ActionField extends JPanel {
             }
         });
         mes.add(txt, new GridBagConstraints(0, 0, 0, 1, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
-//        mes.add(agressor, new GridBagConstraints(0, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
         mes.add(repeat, new GridBagConstraints(1, 1, 1, 0, 1, 0, GridBagConstraints.CENTER, 0, new Insets(0, 0, 5, 0), 0, 0));
         selectPanel.setContentPane(mes);
 
