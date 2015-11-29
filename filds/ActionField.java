@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.swing.*;
 
 
@@ -36,6 +37,7 @@ public class ActionField extends JPanel {
     private ExecutorService poolBullet;
     volatile private Queue<Bullet> bulletList;
     private List<String> historyGame;
+    private String namePC;
     Action current;
 
     public ActionField() throws Exception {
@@ -169,7 +171,7 @@ public class ActionField extends JPanel {
         batleField = new Batlefild(1);
 
         tanks.clear();
-        bulletList.remove();
+        //bulletList.remove();
 
         tanks.put("defender", new T34(this, batleField));
         try {
@@ -184,31 +186,22 @@ public class ActionField extends JPanel {
         restarParam();
         setGameStatus(true);
 
-//        poolThread.submit(
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            tanks.get("agressor").destroyEnemy();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//        );
+        poolThread.submit(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (namePC.equals("agressor")) {
+                        tanks.get("agressor").destroyEagle();
+                    } else {
+                        tanks.get("defender").destroyEnemy();
+                    }
 
 
-        poolThread.submit(new Thread(){
-                            @Override
-                            public void run() {
-                                try {
-
-                                    tanks.get("agressor").destroyEnemy();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         poolThread.submit(
                 new Thread() {
                     @Override
@@ -222,9 +215,18 @@ public class ActionField extends JPanel {
 //
                         try {
                             l = h.repeatGame();
+
                             for (int i = 0; i < l.size(); i++) {
 
                                 ss = (String) l.get(i);
+                                System.out.println(ss);
+//                                    if (ss.equals("#")){
+//                                        finish("");
+//                                        gameStatus = false;
+//                                        finalPanel("*****");
+//                                        break;
+//                                    }
+
                                 int f = ss.indexOf("_");
                                 t = Long.valueOf(ss.substring(0, f));
                                 String n = ss.substring(f + 1, ss.indexOf("_", f + 1));
@@ -263,6 +265,10 @@ public class ActionField extends JPanel {
 
                                 }
                             }
+//                            Thread.sleep(1000);
+//                            gameStatus = false;
+
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -290,7 +296,7 @@ public class ActionField extends JPanel {
 
     public void nextAction(String nameTank, Action action) throws Exception {
         if (action != Action.FIRE) {
-            if (iCanDoThisAction(nameTank, action) ) {
+            if (iCanDoThisAction(nameTank, action)) {
                 actionMap.clear();
                 synchronized (tanks.get(nameTank)) {
                     //tanks.get(nameTank).setMissionCompliet(true);
@@ -457,7 +463,7 @@ public class ActionField extends JPanel {
                 babah(tanks.get(enemy), bullet.getArmorPiercing(), y, x);
                 return true;
             }
-            if (crashBullet(bullet)){
+            if (crashBullet(bullet)) {
                 return true;
             }
 
@@ -467,21 +473,22 @@ public class ActionField extends JPanel {
         }
 
     }
-    public boolean crashBullet(Bullet bullet){
 
-            Object[] b = bulletList.toArray();
-            for (int i = 0; i < b.length; i++) {
-                Bullet bb = (Bullet) b[i];
-                if (bullet.getTank() != bb.getTank() && bullet.getX() == bb.getX() && bullet.getY() == bb.getY()){
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+    public boolean crashBullet(Bullet bullet) {
 
-                    return true;
+        Object[] b = bulletList.toArray();
+        for (int i = 0; i < b.length; i++) {
+            Bullet bb = (Bullet) b[i];
+            if (bullet.getTank() != bb.getTank() && bullet.getX() == bb.getX() && bullet.getY() == bb.getY()) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+                return true;
             }
+        }
         return false;
     }
 
@@ -521,10 +528,14 @@ public class ActionField extends JPanel {
                     @Override
                     public void run() {
                         try {
-                            if (nameTank.equals("agressor")){
+                            if (nameTank.equals("agressor")) {
+                                namePC = whoIsEnamy(nameTank);
+                                // while (gameStatus) {
 
-                            tanks.get(whoIsEnamy(nameTank)).destroyEnemy();
+                                tanks.get(whoIsEnamy(nameTank)).destroyEnemy();
+                                //}
                             } else {
+                                namePC = whoIsEnamy(nameTank);
                                 tanks.get(whoIsEnamy(nameTank)).destroyEagle();
                             }
 
@@ -544,26 +555,64 @@ public class ActionField extends JPanel {
                             for (String a : name) {
                                 if (tanks.get(a).getArmor() == 0) {
                                     gameStatus = false;
+                                    finalPanel(whoIsEnamy(a));
+
                                     try {
                                         History history = new History();
                                         history.addHistory(historyGame);
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    finalPanel(whoIsEnamy(a));
+
+
                                 }
                             }
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+
+                            if (!batleField.searchEagle()) {
+                                gameStatus = false;
+                                finalPanel("agressor");
+                                finish("agressor");
+
+
+                                try {
+                                    History history = new History();
+                                    history.addHistory(historyGame);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
                             }
                         }
-                        if (!gameStatus){
-                            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
+
                 });
+//        poolThread.submit(
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        while (gameStatus) {
+//                            try {
+//                                History history = new History();
+//                                history.addHistory(historyGame);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                        }
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                });
 
         poolThread.submit(
                 new Thread() {
@@ -607,10 +656,12 @@ public class ActionField extends JPanel {
         };
         poolThread.submit(t);
     }
-    public void finish(String nameWinner){
-        //tanks.clear();
+
+    public void finish(String nameWinner) {
+        tanks.clear();
+        //poolThread.shutdown();
         bulletList.clear();
-        finalPanel(nameWinner);
+        //finalPanel(nameWinner);
     }
 
     public void babah(Destroy element, int a, int x, int y) {

@@ -29,6 +29,7 @@ public class History {
             str = (String) history.get(i);
             bw.write(str + '\n');
         }
+        //bw.write("#");
         bw.close();
         repeatGame();
     }

@@ -41,11 +41,13 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     private ExecutorService poolBullet;
     private int ammunition;
     volatile private Action currentAction;
+    private boolean life;
 
     private List<Bullet> bulletMagazin = new ArrayList<>();
 
 
     public AbstractTank() {
+        life = true;
         currentAction = null;
         directionImageTank = new HashMap<>();
         poolBullet = Executors.newFixedThreadPool(3);
@@ -251,11 +253,11 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
                 }
 
             }
-            if (bf.scanQuadrant(x/64, y/64).getArmor() == 0) {
-                af.setGameStatus(false);
-                af.finalPanel(name);
-               // af.finish(name);
-            }
+//            if (bf.scanQuadrant(x/64, y/64).getArmor() == 0) {
+//                af.setGameStatus(false);
+//                af.finalPanel(name);
+//                // af.finish(name);
+//            }
             move();
         }
     }
@@ -371,7 +373,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         String enemyName = af.whoIsEnamy(name);
         Action a = null;
 
-        while (af.getGameStatus()) {
+        while (!af.getTanks().get(enemyName).getLife()) {
+//            System.out.println(af.getTanks(enemyName).d);
             int x = af.getTanks().get(enemyName).getX();
             int y = af.getTanks().get(enemyName).getY();
 //            radarEnemy();
@@ -503,6 +506,10 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
     }
 
+    public boolean getLife() {
+        return life;
+    }
+
     public void setCurrentAction(Action currentAction) {
         try {
             Thread.sleep(10);
@@ -631,7 +638,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         if (getArmor() == 0) {
             setY(-100);
             setX(-100);
-            af.setGameStatus(false);
+            life = false;
+            //af.setGameStatus(false);
 
             return true;
 

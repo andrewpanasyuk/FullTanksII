@@ -76,7 +76,20 @@ public class Batlefild {
         return constractField;
     }
 
+public boolean searchEagle(){
+    Construct eagle = null;
+    int x = 0;
+    int y = 0;
+    for (int xx = 0; xx < 9; xx++) {
+        for (int b = 0; b < 9; b++) {
+            if (scanQuadrant(xx, b) instanceof Eagle) {
+               return true;
+            }
 
+        }
+    }
+    return false;
+}
     public Construct[][] getBatlefield() {
         return batlefield;
     }
