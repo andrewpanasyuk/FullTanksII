@@ -378,6 +378,9 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
             int x = af.getTanks().get(enemyName).getX();
             int y = af.getTanks().get(enemyName).getY();
 //            radarEnemy();
+            if (y < 0){
+                break;
+            }
             if (getY() > y) {
                 setDirection(Direction.UP);
                 a = Action.UP;
@@ -398,9 +401,11 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
                 fire();
             }
             if (canIseeEnemy(enemyName)) {
-                fire();
-                if (af.getTanks().get(enemyName).getArmor() == 0){
-                    af.getTanks().get(enemyName).destroy();
+                while (canIseeEnemy(enemyName)) {
+                    fire();
+
+//                if (af.getTanks().get(enemyName).getArmor() == 0){
+//                    af.getTanks().get(enemyName).destroy();
                 }
             }
             move();

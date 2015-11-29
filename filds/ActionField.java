@@ -456,11 +456,11 @@ public class ActionField extends JPanel {
         int x = Integer.parseInt(qad.substring(separator + 1));
         if (y >= 0 && y <= 8 && x >= 0 && x <= 8) {
             if (batleField.getBatlefield()[x][y].getArmor() > 0) {
-                babah(batleField.getBatlefield()[x][y], bullet.getArmorPiercing(), y, x);
+                babah(batleField.getBatlefield()[x][y], bullet.getArmorPiercing(), y, x, enemy);
                 return true;
             }
             if (bullet.getX() / 64 == tanks.get(enemy).getX() / 64 && bullet.getY() / 64 == tanks.get(enemy).getY() / 64) {
-                babah(tanks.get(enemy), bullet.getArmorPiercing(), y, x);
+                babah(tanks.get(enemy), bullet.getArmorPiercing(), y, x, enemy);
                 return true;
             }
             if (crashBullet(bullet)) {
@@ -664,10 +664,27 @@ public class ActionField extends JPanel {
         //finalPanel(nameWinner);
     }
 
-    public void babah(Destroy element, int a, int x, int y) {
-        if (element.destroy(a)) {
-            batleField.updateQuadrant(y, x, new Empty(x, y));
+    public void babah(Destroy element, int a, int x, int y, String enemy) {
+        if (element instanceof Construct){
+            if (element.destroy(a)) {
+                batleField.updateQuadrant(y, x, new Empty(x, y));
+            }
+        } else if (element instanceof AbstractTank){
+            //element.destroy(a);
+            if (element.destroy(a)){
+                //tanks.remove(enemy);
+                Iterator<Bullet>i = bulletList.iterator();
+                while (i.hasNext()){
+                    if (i.next().getTank().getName().equals(enemy)){
+                        i.remove();
+                    }
+                }
+            }
+
+
         }
+
+
     }
 
     public boolean getGameStatus() {
