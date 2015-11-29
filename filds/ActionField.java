@@ -29,20 +29,20 @@ public class ActionField extends JPanel {
     private volatile Map<String, Action> actionMap = new TreeMap<>();
     public ActionField actionField;
     volatile public Map<String, Bullet> bullets;
-    private boolean gameStatus;
+    volatile private boolean gameStatus = true;
     private long startTime;
     volatile private Queue<Action> listAction;
     private ExecutorService poolThread;
     private ExecutorService poolBullet;
-    private Queue<Bullet> bulletList;
+    volatile private Queue<Bullet> bulletList;
     private List<String> historyGame;
     Action current;
 
     public ActionField() throws Exception {
         current = null;
         historyGame = new ArrayList<>();
-        startTime = System.currentTimeMillis();
-        gameStatus = true;
+//        startTime = System.currentTimeMillis();
+//        gameStatus = true;
         batleField = new Batlefild(1);
         tanks.put("defender", new T34(this, batleField));
         tanks.put("agressor", new Tiger(this, batleField));
@@ -132,6 +132,12 @@ public class ActionField extends JPanel {
     }
 
     public void finalPanel(String nameWinner) {
+//        try {
+//            History history = new History();
+//            history.addHistory(historyGame);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         JFrame selectPanel = new JFrame("Final!!!");
         selectPanel.setMinimumSize(new Dimension(350, 250));
         selectPanel.setLocation(500, 250);
@@ -161,7 +167,10 @@ public class ActionField extends JPanel {
 
     public void restarParam() {
         batleField = new Batlefild(1);
+
         tanks.clear();
+        bulletList.remove();
+
         tanks.put("defender", new T34(this, batleField));
         try {
             tanks.put("agressor", new Tiger(this, batleField));
@@ -171,16 +180,46 @@ public class ActionField extends JPanel {
     }
 
     public void povtor() {
+
+        restarParam();
+        setGameStatus(true);
+
+//        poolThread.submit(
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            tanks.get("agressor").destroyEnemy();
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//        );
+
+
+        poolThread.submit(new Thread(){
+                            @Override
+                            public void run() {
+                                try {
+
+                                    tanks.get("agressor").destroyEnemy();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
         poolThread.submit(
                 new Thread() {
                     @Override
                     public void run() {
-                        restarParam();
+//                        restarParam();
                         Long t = 0l;
                         int d = 0;
                         String ss;
                         History h = new History();
                         List l = null;
+//
                         try {
                             l = h.repeatGame();
                             for (int i = 0; i < l.size(); i++) {
@@ -251,12 +290,14 @@ public class ActionField extends JPanel {
 
     public void nextAction(String nameTank, Action action) throws Exception {
         if (action != Action.FIRE) {
-            if (iCanDoThisAction(nameTank, action)) {
-
+            if (iCanDoThisAction(nameTank, action) ) {
+                actionMap.clear();
                 synchronized (tanks.get(nameTank)) {
-                    tanks.get(nameTank).setMissionCompliet(true);
+                    //tanks.get(nameTank).setMissionCompliet(true);
+
                     actionMap.put(nameTank, action);
                     recHistoryGame(nameTank, action);
+                    tanks.get(nameTank).setCurrentAction(null);
                     tanks.get(nameTank).notify();
                 }
             }
@@ -272,6 +313,7 @@ public class ActionField extends JPanel {
     public void iWantToFire(String nameTank, Action action) throws Exception {
         if (tanks.get(nameTank).controlAmmunition()) {
             poolBullet.submit(tanks.get(nameTank));
+            tanks.get(nameTank).setCurrentAction(null);
         } else {
             Thread.sleep(50);
             tanks.get(nameTank).setAmmunition(3);
@@ -358,6 +400,7 @@ public class ActionField extends JPanel {
                 Thread.sleep(abstractTank.getSpeed());
                 abstractTank.setMissionCompliet(false);
             }
+            //tanks.get(abstractTank.getName()).setCurrentAction(null);
         }
         abstractTank.setMissionCompliet(false);
     }
@@ -414,11 +457,32 @@ public class ActionField extends JPanel {
                 babah(tanks.get(enemy), bullet.getArmorPiercing(), y, x);
                 return true;
             }
+            if (crashBullet(bullet)){
+                return true;
+            }
+
             return false;
         } else {
             return true;
         }
 
+    }
+    public boolean crashBullet(Bullet bullet){
+
+            Object[] b = bulletList.toArray();
+            for (int i = 0; i < b.length; i++) {
+                Bullet bb = (Bullet) b[i];
+                if (bullet.getTank() != bb.getTank() && bullet.getX() == bb.getX() && bullet.getY() == bb.getY()){
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    return true;
+                }
+            }
+        return false;
     }
 
     public String controlTank(Bullet bullet) {
@@ -451,12 +515,20 @@ public class ActionField extends JPanel {
 
 
     public void startGame(String nameTank) {
+        startTime = System.currentTimeMillis();
         poolThread.submit(
                 new Thread() {
                     @Override
                     public void run() {
                         try {
-                            tanks.get(whoIsEnamy(nameTank)).destroyEagle();
+                            if (nameTank.equals("agressor")){
+
+                            tanks.get(whoIsEnamy(nameTank)).destroyEnemy();
+                            } else {
+                                tanks.get(whoIsEnamy(nameTank)).destroyEagle();
+                            }
+
+//                            tanks.get(whoIsEnamy(nameTank)).destroyEagle();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -487,6 +559,9 @@ public class ActionField extends JPanel {
                                 e.printStackTrace();
                             }
                         }
+                        if (!gameStatus){
+                            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        }
                     }
                 });
 
@@ -505,7 +580,7 @@ public class ActionField extends JPanel {
                                         tanks.get(nameTank).setDirection(Direction.values()[numberAction(actionMap.get(nameTank))]);
                                         tanks.get(nameTank).setMissionCompliet(false);
                                     }
-                                    tanks.get(nameTank).setCurrentAction(null);
+//                                    tanks.get(nameTank).setCurrentAction(null);
                                     tanks.get(nameTank).notify();
                                 }
                             }
@@ -531,6 +606,11 @@ public class ActionField extends JPanel {
             }
         };
         poolThread.submit(t);
+    }
+    public void finish(String nameWinner){
+        //tanks.clear();
+        bulletList.clear();
+        finalPanel(nameWinner);
     }
 
     public void babah(Destroy element, int a, int x, int y) {

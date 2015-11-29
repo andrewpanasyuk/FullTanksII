@@ -12,7 +12,7 @@ public class Launcher {
 //        SplashScreen splashScreen = SplashScreen.getSplashScreen();
 //        Thread.sleep(5000);
 //        splashScreen.close();
-
+//        System.out.println(System.getProperty("java.io.tmpdir"));
 
         ActionField actionField = new ActionField();   //*****************************************
 //        List<String>s= new ArrayList<>();

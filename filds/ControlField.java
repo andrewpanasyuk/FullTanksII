@@ -38,18 +38,19 @@ public class ControlField {
         }
     }
     public static boolean controlWoll(Batlefild bf, AbstractTank abstractTank, ActionField af) {
-        int y = abstractTank.getY() / 64;
-        int x = abstractTank.getX() / 64;
-        if (abstractTank.getDirection() == Direction.UP && y != 0) {
-            y = y - 1;
-        } else if (abstractTank.getDirection() == Direction.DOWN && y != 8) {
-            y = y + 1;
-        } else if (abstractTank.getDirection() == Direction.LEFT && x != 0) {
-            x = x - 1;
-        } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
-            x = x + 1;
-        }
-        if (bf.getBatlefield()[y][x] instanceof Empty || bf.getBatlefield()[y][x] instanceof Water) {
+
+            int y = abstractTank.getY() / 64;
+            int x = abstractTank.getX() / 64;
+            if (abstractTank.getDirection() == Direction.UP && y != 0) {
+                y = y - 1;
+            } else if (abstractTank.getDirection() == Direction.DOWN && y != 8) {
+                y = y + 1;
+            } else if (abstractTank.getDirection() == Direction.LEFT && x != 0) {
+                x = x - 1;
+            } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
+                x = x + 1;
+            }
+            if (bf.getBatlefield()[y][x] instanceof Empty || bf.getBatlefield()[y][x] instanceof Water) {
 //            if (bf.getBatlefield()[y][x] instanceof Water) {
 ////                af.paintComponent(Graphics g){
 ////
@@ -65,11 +66,12 @@ public class ControlField {
 ////                abstractTank.
 //
 //            }
-            return true;
-        } else {
-            return false;
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
+
     public boolean isField() {
         return field;
     }

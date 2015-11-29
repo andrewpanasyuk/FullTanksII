@@ -78,16 +78,12 @@ public abstract class Construct implements Destroy, Drawable {
 
     @Override
     public boolean destroy(int a) {
-        System.out.println("armor do = " + getArmor());
             setArmor(getArmor() - 1);
             if (getArmor() == 0) {
-                System.out.println("armor posle = " + getArmor());
                 setNameImage("dor.png");
                 setImg(getNameImage());
-                //batleField.updateQuadrant(y, x, new Empty(x, y));
                 return true;
         }
-        System.out.println("armor posle = " + getArmor());
         return false;
     }
 

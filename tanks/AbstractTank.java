@@ -5,6 +5,7 @@ import bullet.Bullet;
 import filds.ActionField;
 import filds.ControlField;
 import filds.Batlefild;
+import objectBF.Eagle;
 import service.Action;
 import service.Destroy;
 import service.Direction;
@@ -39,7 +40,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     private Image image;
     private ExecutorService poolBullet;
     private int ammunition;
-    private Action currentAction;
+    volatile private Action currentAction;
 
     private List<Bullet> bulletMagazin = new ArrayList<>();
 
@@ -81,7 +82,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public boolean controlAmmunition() {
-        if (ammunition > 0){
+        if (ammunition > 0) {
             ammunition = getAmmunition() - 1;
             return true;
         }
@@ -195,7 +196,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         String coordEagle = "";
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-                if (bf.scanQuadrant(x, y).getArmor() > 4) {
+//                if (bf.scanQuadrant(x, y).getArmor() > 4) {
+                if (bf.scanQuadrant(x, y) instanceof Eagle) {
                     coordEagle = x + "_" + y;
                 }
             }
@@ -206,58 +208,222 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
 
     public void destroyEagle() throws Exception {
-        //bf.getBatlefield()
+
+
         int x = 0;
         int y = 0;
-        for (int a = 0; a < 9; a++) {
+        for (int xx = 0; xx < 9; xx++) {
             for (int b = 0; b < 9; b++) {
-                if (bf.scanQuadrant(a, b).getArmor() > 4) {
-                    y = a;
-                    x = b;
+                if (bf.scanQuadrant(xx, b) instanceof Eagle) {
+                    x = xx * 64;
+                    y = b * 64;
                 }
 
             }
         }
-//        moveToQuadrant(x, y);
-        moveToQuadrantFire(x, y);
+        while (af.getGameStatus()) {
+            Action a = null;
+            if (getY() > y) {
+                setDirection(Direction.UP);
+                a = Action.UP;
+            } else if (getY() < y) {
+                setDirection(Direction.DOWN);
+                a = Action.DOWN;
+            } else if (getY() == y) {
 
-//        while (bf.scanQuadrant(x, y).getArmor() != 0) {
-////            fire();
-//        }
+                if (getX() < x) {
+                    setDirection(Direction.RIGHT);
+                    a = Action.RIGHT;
+                } else if (getX() > x) {
+                    setDirection(Direction.LEFT);
+                    a = Action.LEFT;
+                }
+            }
+            if (af.iSeeWall(name, a)) {
+                fire();
+            }
+            if (canIseeEnemy(af.whoIsEnamy(name))) {
+                fire();
+            }
+            if (canIseeEagle(x, y)) {
+                while (bf.scanQuadrant(x/64, y/64).getArmor() > 0) {
+                    fire();
+                }
+
+            }
+            if (bf.scanQuadrant(x/64, y/64).getArmor() == 0) {
+                af.setGameStatus(false);
+                af.finalPanel(name);
+               // af.finish(name);
+            }
+            move();
+        }
     }
-    public boolean canIseeEnemy(String enemy){
+
+    public boolean canIseeEagle(int x, int y) {
+        int eagleX = x / 64;
+        int eagleY = y / 64;
+        System.out.println(eagleX + " = " + eagleY + " ---|||||--- " + getX()/64 + " == " + getY()/64);
+
+        if (getX() / 64 == eagleX) {
+            int count = Math.abs(getY() / 64 - eagleY);
+            int a = 0;
+            for (int i = 0; i < count; i++) {
+                if (getY() / 64 < eagleY) {
+                    if (bf.scanQuadrant(getX() / 64, getY() / 64 + i).getArmor() < 1) {
+                        a++;
+                    }
+                } else if (getY() / 64 > eagleY) {
+                    if (bf.scanQuadrant(getX() / 64, getY() / 64 - i).getArmor() < 1) {
+                        a++;
+                    }
+                }
+                if (a == count) {
+                    return true;
+                }
+            }
+
+        }
+        if (getY() / 64 == eagleY) {
+            int count = Math.abs(getX() / 64 - eagleX);
+            int a = 0;
+            for (int i = 0; i <= count; i++) {
+                if (getX() / 64 < eagleX) {
+                    if (bf.scanQuadrant(getX() / 64 + i, getY() / 64).getArmor() < 1) {
+                        a++;
+                    }
+                } else if (getX() / 64 > eagleX) {
+                    if (bf.scanQuadrant((getX() / 64) - i, getY() / 64).getArmor() < 1) {
+                        a++;
+                    } else {
+                        return false;
+                    }
+                }
+                if (a == count) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
-    public String whereEnemy(String enemy){
-        String coord;
-        int x = af.getTanks().get(enemy).getX();
-        int y = af.getTanks().get(enemy).getY();
-        coord = Integer.toString(x) + "_" + Integer.toString(y);
-        return coord;
-    }
-    public void destroyEnemy() throws Exception {
-        String enemy = af.whoIsEnamy(name);
 
-        canIseeEnemy(enemy);
-        int x = 0;
-        int y = 0;
-        for (int a = 0; a < 9; a++) {
-            for (int b = 0; b < 9; b++) {
-                if (bf.scanQuadrant(a, b).getArmor() > 4) {
-                    y = a;
-                    x = b;
+
+    public boolean canIseeEnemy(String enemy) {
+        int enemyX = af.getTanks().get(enemy).getX() / 64;
+        int enemyY = af.getTanks().get(enemy).getY() / 64;
+
+
+        if (getX() / 64 == enemyX) {
+            int count = Math.abs(getY() / 64 - enemyY);
+            int a = 0;
+            for (int i = 0; i < count; i++) {
+                if (getY() / 64 < enemyY) {
+                    if (bf.scanQuadrant(getX() / 64, getY() / 64 + i).getArmor() < 1) {
+                        a++;
+                    }
+                } else if (getY() / 64 > enemyY) {
+                    if (bf.scanQuadrant(getX() / 64, getY() / 64 - i).getArmor() < 1) {
+                        a++;
+                    }
                 }
+                if (a == count) {
+                    return true;
+                }
+            }
 
+        }
+        if (getY() / 64 == enemyY) {
+            int count = Math.abs(getX() / 64 - enemyX);
+            int a = 0;
+            for (int i = 0; i <= count; i++) {
+                if (getX() / 64 < enemyX) {
+                    if (bf.scanQuadrant(getX() / 64 + i, getY() / 64).getArmor() < 1) {
+                        a++;
+                    }
+                } else if (getX() / 64 > enemyX) {
+                    if (bf.scanQuadrant((getX() / 64) - i, getY() / 64).getArmor() < 1) {
+                        a++;
+                    } else {
+                        return false;
+                    }
+                }
+                if (a == count) {
+                    return true;
+                }
             }
         }
-        moveToQuadrantFire(x + 1, y + 1);
-        while (bf.scanQuadrant(x, y).getArmor() != 0) {
-            fire();
+        return false;
+    }
+
+//    public String whereEnemy(String enemy) {
+//        String coord;
+//        int x = af.getTanks().get(enemy).getX();
+//        int y = af.getTanks().get(enemy).getY();
+//        coord = Integer.toString(x) + "_" + Integer.toString(y);
+//        return coord;
+//    }
+//
+//    public void radarEnemy() {
+//
+//    }
+
+    public void destroyEnemy() throws Exception {
+        String enemyName = af.whoIsEnamy(name);
+        Action a = null;
+
+        while (af.getGameStatus()) {
+            int x = af.getTanks().get(enemyName).getX();
+            int y = af.getTanks().get(enemyName).getY();
+//            radarEnemy();
+            if (getY() > y) {
+                setDirection(Direction.UP);
+                a = Action.UP;
+            } else if (getY() < y) {
+                setDirection(Direction.DOWN);
+                a = Action.DOWN;
+            } else if (getY() == y) {
+
+                if (getX() < x) {
+                    setDirection(Direction.RIGHT);
+                    a = Action.RIGHT;
+                } else if (getX() > x) {
+                    setDirection(Direction.LEFT);
+                    a = Action.LEFT;
+                }
+            }
+            if (af.iSeeWall(name, a)) {
+                fire();
+            }
+            if (canIseeEnemy(enemyName)) {
+                fire();
+                if (af.getTanks().get(enemyName).getArmor() == 0){
+                    af.getTanks().get(enemyName).destroy();
+                }
+            }
+            move();
         }
+//        String enemy = af.whoIsEnamy(name);
+//
+//        canIseeEnemy(enemy);
+//        int x = 0;
+//        int y = 0;
+//        for (int a = 0; a < 9; a++) {
+//            for (int b = 0; b < 9; b++) {
+//                if (bf.scanQuadrant(a, b).getArmor() > 4) {
+//                    y = a;
+//                    x = b;
+//                }
+//
+//            }
+//        }
+//        moveToQuadrantFire(x + 1, y + 1);
+//        while (bf.scanQuadrant(x, y).getArmor() != 0) {
+//            fire();
+//        }
     }
 
     public void moveRandomWollFire() throws Exception { // ---------------------------------
-        while (getArmor()>0) {
+        while (getArmor() > 0) {
             int random = new Random().nextInt(3);
             if (random == 0) {
 //                af.nextAction(name, Action.UP);
@@ -272,7 +438,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 //                af.nextAction(name, Action.RIGHT);
                 this.direction = Direction.RIGHT;
             }
-            System.out.println(getX()/64 + "_" + getY()/64);
+            System.out.println(getX() / 64 + "_" + getY() / 64);
             move();
 //            af.nextAction(name, Action.FIRE);
             fire();
@@ -324,7 +490,9 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
 
     public void waitAction(Action action) throws Exception {
-        currentAction = action;
+        System.out.println(currentAction + "  /////****////****///---" + action);
+        setCurrentAction(action);
+//        currentAction = action;
         af.nextAction(getName(), action);
 
 
@@ -342,7 +510,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
             e.printStackTrace();
         }
 //        if (currentAction != Action.FIRE) {
-            this.currentAction = currentAction;
+        this.currentAction = currentAction;
 //        }
     }
 
@@ -354,8 +522,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         System.out.println(v + " ************* " + h);
         String newQadrant = af.getQuadrantXY(v, h);
         int separator = newQadrant.indexOf("_");
-        int goalY = v*64;
-        int goalX = h*64;
+        int goalY = v * 64;
+        int goalX = h * 64;
         System.out.println(goalX + " _________ " + goalY);
         while (af.getGameStatus()) {
             if (x < goalX) {
@@ -399,7 +567,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
                 }
 
             }
-            if (bf.scanQuadrant(goalX, goalY).getArmor() == 0){
+            if (bf.scanQuadrant(goalX, goalY).getArmor() == 0) {
                 af.setGameStatus(false);
             }
         }
@@ -463,6 +631,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         if (getArmor() == 0) {
             setY(-100);
             setX(-100);
+            af.setGameStatus(false);
 
             return true;
 
@@ -472,6 +641,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
     @Override
     public boolean destroy() {
+
         return false;
     }
 

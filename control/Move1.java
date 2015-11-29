@@ -41,8 +41,11 @@ public class Move1 implements KeyListener {
                     try {
                         //System.out.println(actionField.getCurrent() + " /////");
                         if (abstractTank.getCurrentAction() != actionsList.peek()) {
+                            //abstractTank.setCurrentAction(actionsList.poll());
                             abstractTank.waitAction(actionsList.poll());
 //                            actionsList.remove();
+                        } else {
+                            actionsList.remove();
                         }
 //                        Action temp = actionsList.poll();
 //
@@ -75,7 +78,7 @@ public class Move1 implements KeyListener {
 //            public void run() {
 //                while (true) {
 //                    try {
-//                        Thread.sleep(500);
+//                        Thread.sleep(50);
 //                    } catch (Exception r) {
 //
 //                    }
@@ -91,6 +94,7 @@ public class Move1 implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (mapKeys.containsKey(e.getKeyCode())) {
             mapKeys.put(e.getKeyCode(), true);
+            controlPress(e.getKeyCode());
             currentAction = mapActions.get(e.getKeyCode());
 //            if (mapActions.get(e.getKeyCode()) != Action.FIRE) {
 //                currentAction = mapActions.get(e.getKeyCode());
@@ -106,7 +110,7 @@ public class Move1 implements KeyListener {
             //System.out.println(actionField.getListAction().size());
 //            actionField.getListAction().add(currentAction);
 
-                    controlPress(e.getKeyCode());
+
         }
     }
 
@@ -120,6 +124,9 @@ public class Move1 implements KeyListener {
         if (mapKeys.containsKey(e.getKeyCode())) {
             currentAction = null;
             mapKeys.put(e.getKeyCode(), false);
+            if (actionsList.size()>0) {
+                actionsList.remove();
+            }
         }
     }
 

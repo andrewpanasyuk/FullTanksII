@@ -11,5 +11,13 @@ public class Eagle extends Construct {
         setImg(getNameImage());
         setArmor(5);
     }
+
+    @Override
+    public boolean destroy(int a) {
+        if (getArmor() == 0){
+
+        }
+        return super.destroy(a);
+    }
 }
 
