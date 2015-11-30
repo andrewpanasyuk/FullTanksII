@@ -29,7 +29,6 @@ public class History {
             str = (String) history.get(i);
             bw.write(str + '\n');
         }
-        //bw.write("#");
         bw.close();
         repeatGame();
     }
@@ -41,9 +40,6 @@ public class History {
         while ((step = br.readLine()) != null) {
             history.add(step);
         }
-//        for (int i = 0; i < history.size(); i++){
-//            System.out.println(history.get(i));
-//        }
         return history;
     }
 }

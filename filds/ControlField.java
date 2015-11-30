@@ -41,6 +41,9 @@ public class ControlField {
 
             int y = abstractTank.getY() / 64;
             int x = abstractTank.getX() / 64;
+        if (y < 0){
+            return false;
+        }
             if (abstractTank.getDirection() == Direction.UP && y != 0) {
                 y = y - 1;
             } else if (abstractTank.getDirection() == Direction.DOWN && y != 8) {
@@ -50,6 +53,7 @@ public class ControlField {
             } else if (abstractTank.getDirection() == Direction.RIGHT && x != 8) {
                 x = x + 1;
             }
+
             if (bf.getBatlefield()[y][x] instanceof Empty || bf.getBatlefield()[y][x] instanceof Water) {
 //            if (bf.getBatlefield()[y][x] instanceof Water) {
 ////                af.paintComponent(Graphics g){

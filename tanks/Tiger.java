@@ -37,18 +37,6 @@ public class Tiger extends AbstractTank {
         newBaseAgressor();
     }
 
-    @Override
-    public boolean destroy(int a) {
-        setArmor(getArmor() - 1);
-        if (getArmor() > 0) {
-            return false;
-        } else {
-            setY(-100);
-            setX(-100);
-            return true;
-
-        }
-    }
 
 }
 

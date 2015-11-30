@@ -115,7 +115,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
 
     public void move() throws Exception {
-        System.out.println(getX() + "_" + getY());
         af.processMove(this);
     }
 
@@ -183,11 +182,7 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
             this.image = getDirectionImageTank().get(direction);
             if (ControlField.controlTank(bf, this)) {
                 if (ControlField.controlWoll(bf, this, af)) {
-//                    fire();
-//                    Thread.sleep(20);
                     move();
-
-                    //System.out.println(getName() + " bullet: x =  " + getBullet().getX() + " y =  " + getBullet().getY());
                 }
             }
 
@@ -198,7 +193,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         String coordEagle = "";
         for (int x = 0; x < 9; x++) {
             for (int y = 0; y < 9; y++) {
-//                if (bf.scanQuadrant(x, y).getArmor() > 4) {
                 if (bf.scanQuadrant(x, y) instanceof Eagle) {
                     coordEagle = x + "_" + y;
                 }
@@ -225,6 +219,9 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         }
         while (af.getGameStatus()) {
             Action a = null;
+            if (getY() < 0){
+                break;
+            }
             if (getY() > y) {
                 setDirection(Direction.UP);
                 a = Action.UP;
@@ -248,16 +245,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
                 fire();
             }
             if (canIseeEagle(x, y)) {
-                while (bf.scanQuadrant(x/64, y/64).getArmor() > 0) {
-                    fire();
-                }
-
+                fire();
             }
-//            if (bf.scanQuadrant(x/64, y/64).getArmor() == 0) {
-//                af.setGameStatus(false);
-//                af.finalPanel(name);
-//                // af.finish(name);
-//            }
             move();
         }
     }
@@ -357,27 +346,14 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         return false;
     }
 
-//    public String whereEnemy(String enemy) {
-//        String coord;
-//        int x = af.getTanks().get(enemy).getX();
-//        int y = af.getTanks().get(enemy).getY();
-//        coord = Integer.toString(x) + "_" + Integer.toString(y);
-//        return coord;
-//    }
-//
-//    public void radarEnemy() {
-//
-//    }
 
     public void destroyEnemy() throws Exception {
         String enemyName = af.whoIsEnamy(name);
         Action a = null;
 
         while (!af.getTanks().get(enemyName).getLife()) {
-//            System.out.println(af.getTanks(enemyName).d);
             int x = af.getTanks().get(enemyName).getX();
             int y = af.getTanks().get(enemyName).getY();
-//            radarEnemy();
             if (y < 0){
                 break;
             }
@@ -404,30 +380,10 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
                 while (canIseeEnemy(enemyName)) {
                     fire();
 
-//                if (af.getTanks().get(enemyName).getArmor() == 0){
-//                    af.getTanks().get(enemyName).destroy();
                 }
             }
             move();
         }
-//        String enemy = af.whoIsEnamy(name);
-//
-//        canIseeEnemy(enemy);
-//        int x = 0;
-//        int y = 0;
-//        for (int a = 0; a < 9; a++) {
-//            for (int b = 0; b < 9; b++) {
-//                if (bf.scanQuadrant(a, b).getArmor() > 4) {
-//                    y = a;
-//                    x = b;
-//                }
-//
-//            }
-//        }
-//        moveToQuadrantFire(x + 1, y + 1);
-//        while (bf.scanQuadrant(x, y).getArmor() != 0) {
-//            fire();
-//        }
     }
 
     public void moveRandomWollFire() throws Exception { // ---------------------------------
@@ -498,16 +454,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
 
     public void waitAction(Action action) throws Exception {
-        System.out.println(currentAction + "  /////****////****///---" + action);
         setCurrentAction(action);
-//        currentAction = action;
         af.nextAction(getName(), action);
-
-
-//        }
-
-        //System.out.println(action.name());
-        // move();
 
     }
 
@@ -521,7 +469,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        if (currentAction != Action.FIRE) {
         this.currentAction = currentAction;
 //        }
     }
@@ -531,12 +478,10 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public void moveToQuadrantFire(int v, int h) throws Exception {
-        System.out.println(v + " ************* " + h);
         String newQadrant = af.getQuadrantXY(v, h);
         int separator = newQadrant.indexOf("_");
         int goalY = v * 64;
         int goalX = h * 64;
-        System.out.println(goalX + " _________ " + goalY);
         while (af.getGameStatus()) {
             if (x < goalX) {
                 while (x < goalX) {
@@ -599,8 +544,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     }
 
     public void moves(AbstractTank abstractTank) throws Exception {
-//        int covered = 0;
-//        while (covered < 64) {
         if (abstractTank.getDirection() == Direction.UP) {
             abstractTank.updateY(-1);
         } else if (abstractTank.getDirection() == Direction.DOWN) {
@@ -610,9 +553,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
         } else {
             abstractTank.updateX(1);
         }
-//            covered += 1;
-        //repaint();
-//            Thread.sleep(abstractTank.getSpeed());
     }
 
 
@@ -644,7 +584,6 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
             setY(-100);
             setX(-100);
             life = false;
-            //af.setGameStatus(false);
 
             return true;
 
@@ -660,10 +599,8 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
 
     public HashMap<Direction, Image> getDirectionImageTank() {
         directionImageTank = new HashMap<>();
-        // System.out.println(getName());
         try {
             directionImageTank.put(Direction.UP, ImageIO.read(new File("imageBF/" + getName() + "_UP.png")));
-            System.out.println("imageBF/" + getName() + "_UP.png");
             directionImageTank.put(Direction.RIGHT, ImageIO.read(new File("imageBF/" + getName() + "_R.png")));
             directionImageTank.put(Direction.LEFT, ImageIO.read(new File("imageBF/" + getName() + "_L.png")));
             directionImageTank.put(Direction.DOWN, ImageIO.read(new File("imageBF/" + getName() + "_D.png")));
