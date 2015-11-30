@@ -12,6 +12,7 @@ import service.Direction;
 import service.Drawable;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -600,10 +601,10 @@ public abstract class AbstractTank implements Destroy, Drawable, Runnable {
     public HashMap<Direction, Image> getDirectionImageTank() {
         directionImageTank = new HashMap<>();
         try {
-            directionImageTank.put(Direction.UP, ImageIO.read(new File("imageBF/" + getName() + "_UP.png")));
-            directionImageTank.put(Direction.RIGHT, ImageIO.read(new File("imageBF/" + getName() + "_R.png")));
-            directionImageTank.put(Direction.LEFT, ImageIO.read(new File("imageBF/" + getName() + "_L.png")));
-            directionImageTank.put(Direction.DOWN, ImageIO.read(new File("imageBF/" + getName() + "_D.png")));
+            directionImageTank.put(Direction.UP, new ImageIcon(getClass().getResource("/pic/" + getName() + "_UP.png")).getImage());
+            directionImageTank.put(Direction.RIGHT, new ImageIcon(getClass().getResource("/pic/" + getName() + "_R.png")).getImage());
+            directionImageTank.put(Direction.LEFT, new ImageIcon(getClass().getResource("/pic/" + getName() + "_L.png")).getImage());
+            directionImageTank.put(Direction.DOWN, new ImageIcon(getClass().getResource("/pic/" + getName() + "_D.png")).getImage());
         } catch (Exception e) {
             e.printStackTrace();
         }

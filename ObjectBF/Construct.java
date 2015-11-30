@@ -1,9 +1,11 @@
 package objectBF;
 
 import service.Destroy;
+import service.Direction;
 import service.Drawable;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -29,11 +31,7 @@ public abstract class Construct implements Destroy, Drawable {
 
 
     public void setImg(String name) {
-        try {
-            this.img = ImageIO.read(new File("imageBF/" + name));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.img = new ImageIcon(getClass().getResource("/pic/" + name)).getImage();
     }
 
     public String getNameImage() {
